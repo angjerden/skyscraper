@@ -9,3 +9,8 @@ typedef signed int int32;
 typedef unsigned int uint32;
 typedef signed long int int64;
 typedef unsigned long int uint64;
+typedef unsigned long int size_t;
+
+#ifndef NULL
+#define NULL nullptr
+#endif

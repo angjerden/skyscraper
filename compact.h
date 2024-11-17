@@ -19,8 +19,12 @@
  *
  */
 
+#ifndef SKY_COMPACT_H
+#define SKY_COMPACT_H
+
 #include "struc.h"
 #include "skydefs.h"
+#include <iostream>
 
 enum CptIds {
 	CPT_JOEY = 1,
@@ -32,3 +36,57 @@ enum CptIds {
 	CPT_MOVE_LIST = 0xBD,
 	CPT_TALK_TABLE_LIST = 0xBC
 };
+
+enum CptTypeIds {
+	CPT_NULL = 0,
+	COMPACT,
+	TURNTAB,
+	ANIMSEQ,
+	MISCBIN,
+	GETTOTAB,
+	ROUTEBUF,
+	MAINLIST,
+	NUM_CPT_TYPES
+};
+
+class SkyCompact {
+public:
+	SkyCompact(char* skyPath);
+	~SkyCompact();
+	Compact *fetchCpt(uint16 cptId);
+	Compact *fetchCptInfo(uint16 cptId, uint16 *elems = NULL, uint16 *type = NULL, char *name = NULL, size_t nameSize = 0);
+	static uint16 getSub(Compact *cpt, uint16 mode);
+	static void setSub(Compact *cpt, uint16 mode, uint16 value);
+	static MegaSet *getMegaSet(Compact *cpt);
+	uint16 *getGrafixPtr(Compact *cpt);
+	uint16 *getTurnTable(Compact *cpt, uint16 dir);
+	void *getCompactElem(Compact *cpt, uint16 off);
+	bool cptIsId(Compact *cpt, uint16 id);
+	uint8	*createResetData(uint16 gameVersion);
+	uint16	_numSaveIds;
+	uint16	*_saveIds;
+	// - debugging functions
+	uint16 findCptId(void *cpt);
+	uint16 findCptId(const char *cptName);
+	uint16 giveNumDataLists();
+	uint16 giveDataListLen(uint16 listNum);
+	const char *nameForType(uint16 type);
+private:
+	void checkAndFixOfficerBluntError();
+
+	uint16  _numDataLists;
+	uint16  *_dataListLen;
+	uint16  *_rawBuf;
+	char	*_asciiBuf;
+	Compact ***_compacts;
+	char    ***_cptNames;
+	uint16	**_cptSizes;
+	uint16  **_cptTypes;
+	char* skyPath;
+	std::string _cptFilename = "sky.cpt";
+	std::FILE* _cptFile;
+	uint32	_resetDataPos;
+	static const char *const _typeNames[NUM_CPT_TYPES];
+};
+
+#endif
