@@ -22,8 +22,10 @@
 #ifndef SKY_COMPACT_H
 #define SKY_COMPACT_H
 
+#include "endian.h"
 #include "struc.h"
 #include "skydefs.h"
+#include "types.h"
 #include <iostream>
 
 enum CptIds {

@@ -1,3 +1,4 @@
+#include "assert.h"
 #include "compact.h"
 #include <stdio.h>
 #include <iostream>
@@ -9,7 +10,7 @@ SkyCompact::SkyCompact(char* skyPath) {
     std::string cptFilePath(skyPath);
     cptFilePath.append(_cptFilename);
     _cptFile = fopen(cptFilePath.c_str(), "rb");
-    uint16_t compactFileVersion;
+    uint16 compactFileVersion;
     std::fread(&compactFileVersion, 2, 1, _cptFile);
     if (compactFileVersion != 0){
       std::cout << "Unknown sky.cpt version" << std::endl;
@@ -66,15 +67,15 @@ SkyCompact::SkyCompact(char* skyPath) {
     // fill up with compact data
     for (uint32 lcnt = 0; lcnt < _numDataLists; lcnt++) {
       for (uint32 ecnt = 0; ecnt < _dataListLen[lcnt]; ecnt++) {
-        _cptSizes[lcnt][ecnt] = *srcPos++;
+        _cptSizes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);
         if (_cptSizes[lcnt][ecnt]) {
-          _cptTypes[lcnt][ecnt] = *srcPos++;
+          _cptTypes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);
           _compacts[lcnt][ecnt] = (Compact *)rawPos;
           _cptNames[lcnt][ecnt] = asciiPos;
           asciiPos += std::strlen(asciiPos) + 1;
 
           for (uint16 elemCnt = 0; elemCnt < _cptSizes[lcnt][ecnt]; elemCnt++)
-            *rawPos++ = *srcPos++;
+            *rawPos++ = READ_LE_UINT16(srcPos++);
         } else {
           _cptTypes[lcnt][ecnt] = 0;
           _compacts[lcnt][ecnt] = NULL;
@@ -92,12 +93,12 @@ SkyCompact::SkyCompact(char* skyPath) {
     // these compacts don't actually exist but only point to other ones...
     uint16 cnt;
     for (cnt = 0; cnt < numDlincs; cnt++) {
-      uint16 dlincId = *dlincPos++;
-      uint16 destId = *dlincPos++;
-      // assert(((dlincId >> 12) < numDataLists) && ((dlincId & 0xFFF) < dataListLen[dlincId >> 12]) && (compacts[dlincId >> 12][dlincId & 0xFFF] == NULL));
+      uint16 dlincId = READ_LE_UINT16(dlincPos++);
+      uint16 destId = READ_LE_UINT16(dlincPos++);
+      // assert(((dlincId >> 12) < _numDataLists) && ((dlincId & 0xFFF) < _dataListLen[dlincId >> 12]) && (_compacts[dlincId >> 12][dlincId & 0xFFF] == NULL));
       _compacts[dlincId >> 12][dlincId & 0xFFF] = _compacts[destId >> 12][destId & 0xFFF];
 
-      // assert(cptNames[dlincId >> 12][dlincId & 0xFFF] == NULL);
+      // assert(_cptNames[dlincId >> 12][dlincId & 0xFFF] == NULL);
       _cptNames[dlincId >> 12][dlincId & 0xFFF] = asciiPos;
       asciiPos += strlen(asciiPos) + 1;
     }
