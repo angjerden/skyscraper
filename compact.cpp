@@ -11,13 +11,13 @@ SkyCompact::SkyCompact(char* skyPath) {
     cptFilePath.append(_cptFilename);
     _cptFile = fopen(cptFilePath.c_str(), "rb");
     uint16 compactFileVersion;
-    std::fread(&compactFileVersion, 2, 1, _cptFile);
+    std::fread(&compactFileVersion, 1, 2, _cptFile);
     if (compactFileVersion != 0){
       std::cout << "Unknown sky.cpt version" << std::endl;
     }
 
     // Get number of data lists in compact
-    std::fread(&_numDataLists, 2, 1, _cptFile);
+    std::fread(&_numDataLists, 1, 2, _cptFile);
 
     std::cout << "Found " << _numDataLists << " compact data lists." << std::endl;
 
@@ -30,7 +30,7 @@ SkyCompact::SkyCompact(char* skyPath) {
 
     // do memory allocation for each data list
     for (int i = 0; i < _numDataLists; i++) {
-      std::fread(&_dataListLen[i], 2, 1, _cptFile);
+      std::fread(&_dataListLen[i], 1, 2, _cptFile);
       _cptNames[i] = (char**)malloc(_dataListLen[i] * sizeof(char *));
       _cptSizes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
       _cptTypes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
@@ -38,7 +38,7 @@ SkyCompact::SkyCompact(char* skyPath) {
     }
 
     uint32 rawNumInts;
-    std::fread(&rawNumInts, 4, 1, _cptFile);
+    std::fread(&rawNumInts, 1, 4, _cptFile);
     uint32 rawSize = rawNumInts * sizeof(uint16);
     if (rawSize != 297206) {
       std::cout << "Wrong compact raw size." << std::endl;
@@ -46,23 +46,23 @@ SkyCompact::SkyCompact(char* skyPath) {
 	  uint16 *rawPos = _rawBuf = (uint16 *)malloc(rawSize);
 
     uint32 srcSizeInts;
-    std::fread(&srcSizeInts, 4, 1, _cptFile);
+    std::fread(&srcSizeInts, 1, 4, _cptFile);
     uint32 srcSize = srcSizeInts * sizeof(uint16);
     if (srcSize != 310992) {
       std::cout << "Wrong compact source size." << std::endl;
     }
 	  uint16 *srcBuf = (uint16 *)malloc(srcSize);
 	  uint16 *srcPos = srcBuf;
-    std::fread(srcBuf, srcSize, 1, _cptFile);
+    std::fread(srcBuf, 1, srcSize, _cptFile);
 
     uint32 asciiSize;
-    std::fread(&asciiSize, 4, 1, _cptFile);
+    std::fread(&asciiSize, 1, 4, _cptFile);
     if (asciiSize != 42395) {
       std::cout << "Wrong compact ascii size." << std::endl;
     }
     
     char *asciiPos = _asciiBuf = (char *)malloc(asciiSize);
-    std::fread(_asciiBuf, asciiSize, 1, _cptFile);
+    std::fread(_asciiBuf, 1, asciiSize, _cptFile);
 
     // fill up with compact data
     for (uint32 lcnt = 0; lcnt < _numDataLists; lcnt++) {
@@ -86,10 +86,10 @@ SkyCompact::SkyCompact(char* skyPath) {
     free(srcBuf);
 
     uint16 numDlincs;
-    std::fread(&numDlincs, 2, 1, _cptFile);
+    std::fread(&numDlincs, 1, 2, _cptFile);
     uint16 *dlincBuf = (uint16 *)malloc(numDlincs * 2 * sizeof(uint16));
     uint16 *dlincPos = dlincBuf;
-    std::fread(dlincBuf, numDlincs * 2 * sizeof(uint16), 1, _cptFile);
+    std::fread(dlincBuf, 1, numDlincs * 2 * sizeof(uint16), _cptFile);
     // these compacts don't actually exist but only point to other ones...
     uint16 cnt;
     for (cnt = 0; cnt < numDlincs; cnt++) {
@@ -106,16 +106,16 @@ SkyCompact::SkyCompact(char* skyPath) {
 
     // fseek instead of reading and throwing diff data?
     uint16 numDiffs;
-    std::fread(&numDiffs, 2, 1, _cptFile);
+    std::fread(&numDiffs, 1, 2, _cptFile);
     uint16 diffSize;
-    std::fread(&diffSize, 2, 1, _cptFile);
+    std::fread(&diffSize, 1, 2, _cptFile);
     uint16 *diffBuf = (uint16 *)malloc(diffSize * sizeof(uint16));
-    std::fread(diffBuf, diffSize * sizeof(uint16), 1, _cptFile);
+    std::fread(diffBuf, 1, diffSize * sizeof(uint16), _cptFile);
     free(diffBuf);
 
-    std::fread(&_numSaveIds, 2, 1, _cptFile);
+    std::fread(&_numSaveIds, 1, 2, _cptFile);
     _saveIds = (uint16 *)malloc(_numSaveIds * sizeof(uint16));
-    std::fread(_saveIds, _numSaveIds * sizeof(uint16), 1, _cptFile);
+    std::fread(_saveIds, 1, _numSaveIds * sizeof(uint16), _cptFile);
     _resetDataPos = std::ftell(_cptFile);
 
     checkAndFixOfficerBluntError();

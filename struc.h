@@ -156,4 +156,20 @@ struct Compact {
 	MegaSet megaSet3;	 //
 };
 
+struct WavHeader {
+  char chunk_id[4];
+  uint32 chunk_size;
+  char format[4];
+  char subchunk1_id[4];
+  uint32 subchunk1_size;
+  uint16 audio_format;
+  uint16 num_channels;
+  uint32 sample_rate;
+  uint32 byte_rate;
+  uint16 block_align;
+  uint16 bits_per_sample;
+  char subchunk2_id[4];
+  uint32 subchunk2_size;
+};
+
 #endif

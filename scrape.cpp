@@ -2,17 +2,10 @@
   Scraping assets from Beneath A Steel Sky v0.0372 CD/DOS
 */
 
-#include "assert.h"
-#include "struc.h"
 #include "types.h"
 #include "compact.h"
 #include "disk.h"
-#include "skydefs.h"
-#include <stdio.h>
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <fstream>
+#include "writer.h"
 
 int main(int argc, char **argv){
     char* skyPath = NULL;

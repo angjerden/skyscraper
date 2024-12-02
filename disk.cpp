@@ -13,13 +13,13 @@ Disk::Disk(char* skyPath) {
     std::fseek(dnrFile, 0, SEEK_SET);
 
     // Read no of entries
-    std::fread(&_dinnerTableEntries, 4, 1, dnrFile);
+    std::fread(&_dinnerTableEntries, 1, 4, dnrFile);
 
     std::cout << "Found " << _dinnerTableEntries << " dinner table entries." << std::endl;
     
     // Read entries into dinnerTable
     _dinnerTableArea = (uint8_t*)malloc(_dinnerTableEntries * 8);
-    std::fread(_dinnerTableArea, 8 * _dinnerTableEntries, 1, dnrFile);
+    std::fread(_dinnerTableArea, 1, 8 * _dinnerTableEntries, dnrFile);
 	
     memset(_buildList, 0, 60 * 2);
 	memset(_loadedFilesList, 0, 60 * 4);
@@ -81,7 +81,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 
 	//now read in the data
 	// int32 bytesRead = _dataDiskHandle->read(fileDest, fileSize);
-	int32 bytesRead = std::fread(fileDest, fileSize, 1, _dataDiskHandle);
+	int32 bytesRead = std::fread(fileDest, 1, fileSize, _dataDiskHandle);
 
 	if (bytesRead != (int32)fileSize)
 		std::cout << "Unable to read " << fileSize << " bytes from datadisk (" << bytesRead << " bytes read)" << std::endl;
