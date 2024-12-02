@@ -51,13 +51,18 @@ public:
 	void fnFlushBuffers();
 	uint32 *giveLoadedFilesList() { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
+	
+	// From sky.h
+	static void *fetchItem(uint32 num);
+	static void *_itemList[300];
 
 protected:
 	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);
 
 	uint32 _dinnerTableEntries;
-	uint8 *_dinnerTable;
+	uint8 *_dinnerTableArea;
+	// TODO: Replace std::FILE with std::ifstream?
 	std::FILE *_dataDiskHandle;
 	RncDecoder _rncDecoder;
 
@@ -66,6 +71,8 @@ protected:
 
     std::string _dnrFilename = "sky.dnr";
     std::string _diskFilename = "sky.dsk";
+
+	void loadFixedItems();
 };
 
 #endif

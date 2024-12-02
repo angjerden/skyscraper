@@ -23,6 +23,7 @@ int main(int argc, char **argv){
     Disk* skyDisk = new Disk(skyPath);
     
     SkyCompact* skyCompact = new SkyCompact(skyPath);
+
     // Loop through each entry in sky.dsk
     // Store entry in some data structure
     // Write result to file in clear text
