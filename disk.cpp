@@ -1,4 +1,6 @@
 #include "disk.h"
+#include <iostream>
+#include <fstream>
 
 void *Disk::_itemList[300];
 
@@ -76,11 +78,9 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 
 	uint8 *fileDest = (uint8 *)malloc(fileSize + 4); // allocate memory for file
 
-	// _dataDiskHandle->seek(fileOffset, SEEK_SET);
 	std::fseek(_dataDiskHandle, fileOffset, SEEK_SET);
 
 	//now read in the data
-	// int32 bytesRead = _dataDiskHandle->read(fileDest, fileSize);
 	int32 bytesRead = std::fread(fileDest, 1, fileSize, _dataDiskHandle);
 
 	if (bytesRead != (int32)fileSize)
@@ -178,4 +178,58 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 	}
 
 	return 0; //not found
+}
+
+void Disk::writeDinnerTableToFile() {
+	uint16 i;
+	uint8 *dnrTblPtr = (uint8 *)_dinnerTableArea;
+
+	std::ofstream outfile;
+	outfile.open("dinnerTableFile.txt");
+
+	for (i = 0; i < _dinnerTableEntries; i++) {
+		uint16 fNr = READ_LE_UINT16(dnrTblPtr);
+		std::cout << "file " << fNr << "" << std::endl;
+
+		uint32 fileFlags = READ_LE_UINT24(dnrTblPtr + 5);
+		uint32 fileSize = fileFlags & 0x03fffff;
+		uint32 fileOffset = READ_LE_UINT32(dnrTblPtr + 2) & 0x0ffffff;
+		uint8 cflag = (uint8)((fileOffset >> 23) & 0x1);
+		fileOffset &= 0x7FFFFF;
+		if (cflag) {
+			fileOffset <<= 4;
+		}
+		cflag = (uint8)((fileFlags >> 23) & 0x1);
+
+		uint8 *fileDest = (uint8 *)malloc(fileSize + 4); // allocate memory for file
+
+		std::fseek(_dataDiskHandle, fileOffset, SEEK_SET);
+
+		//now read in the data
+		int32 bytesRead = std::fread(fileDest, 1, fileSize, _dataDiskHandle);
+
+		DataFileHeader *fileHeader = (DataFileHeader *)fileDest;
+
+		outfile << "File nr " << fNr << std::endl;
+		outfile << "File flags " << fileFlags << std::endl;
+		outfile << "File size " << fileSize << std::endl;
+		outfile << "File offset " << fileOffset << std::endl;
+		outfile << "Compressed flag " << cflag << std::endl;
+		outfile << "Header flag " << fileHeader->flag << std::endl;
+		outfile << "Header s_x " << fileHeader->s_x << std::endl;
+		outfile << "Header s_y " << fileHeader->s_y << std::endl;
+		outfile << "Header s_width " << fileHeader->s_width << std::endl;
+		outfile << "Header s_height " << fileHeader->s_height << std::endl;
+		outfile << "Header s_sp_size " << fileHeader->s_sp_size << std::endl;
+		outfile << "Header s_tot_size " << fileHeader->s_tot_size << std::endl;
+		outfile << "Header s_n_sprites " << fileHeader->s_n_sprites << std::endl;
+		outfile << "Header s_offset_x " << fileHeader->s_offset_x << std::endl;
+		outfile << "Header s_offset_y " << fileHeader->s_offset_y << std::endl;
+		outfile << "Header s_compressed_size " << fileHeader->s_compressed_size << std::endl;
+		outfile << std::endl;
+
+		dnrTblPtr += 8;
+	}
+
+	outfile.close();
 }

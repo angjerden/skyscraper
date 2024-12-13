@@ -51,6 +51,7 @@ public:
 	void fnFlushBuffers();
 	uint32 *giveLoadedFilesList() { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
+	void writeDinnerTableToFile();
 	
 	// From sky.h
 	static void *fetchItem(uint32 num);
