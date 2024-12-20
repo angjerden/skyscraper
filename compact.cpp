@@ -142,9 +142,6 @@ SkyCompact::~SkyCompact() {
 }
 
 
-Compact* SkyCompact::fetchCpt(uint16 cptId) {
-	return _compacts[cptId >> 12][cptId & 0xFFF];
-}
 
 /* WORKAROUND for bug #2687:
 	The first release of scummvm with externalized, binary compact data has one broken 16 bit reference.
@@ -159,3 +156,29 @@ void SkyCompact::checkAndFixOfficerBluntError() {
     talkTable[SCUMMVM_BROKEN_TALK_INDEX] = ID_SC31_GUARD_TALK2;
   }
 }
+
+const char *SkyCompact::nameForType(uint16 type) {
+	if (type >= NUM_CPT_TYPES)
+		return "unknown";
+	else
+		return _typeNames[type];
+}
+
+Compact* SkyCompact::fetchCpt(uint16 cptId) {
+
+  char* cptName = _cptNames[cptId >> 12][cptId & 0xFFF];
+  const char* typeName = nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]);
+  std::cout << "Loading Compact " << *cptName << " [" << *typeName << "] (" << cptId << "=" << (cptId >> 12) << "," << (cptId & 0xFFF) << ")" << std::endl;
+	return _compacts[cptId >> 12][cptId & 0xFFF];
+}
+
+const char *const SkyCompact::_typeNames[NUM_CPT_TYPES] = {
+	"null",
+	"COMPACT",
+	"TURNTABLE",
+	"ANIM SEQ",
+	"UNKNOWN",
+	"GETTOTABLE",
+	"AR BUFFER",
+	"MAIN LIST"
+};

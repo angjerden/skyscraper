@@ -36,4 +36,22 @@ namespace Writer {
         outfile.close();
         std::cout << "Wrote wav file " << fileName << std::endl;
     }
+
+    // TODO: Will perhaps finish later...
+    // void writeImage(std::string fileName, uint8* img, uint8* palette){
+    //    	int i;
+    //     uint8* inPal = palette;
+    //     uint8* outPal;
+    //     uint8 VGA_COLORS = 256;
+    //     uint8 GAME_SCREEN_WIDTH = 320;
+    //     uint8 GAME_SCREEN_HEIGHT = 192;
+    //     uint8 FULL_SCREEN_WIDTH = 320;
+    //     uint8 FULL_SCREEN_HEIGHT = 200;
+
+    //     for (i = 0; i < VGA_COLORS; i++) {
+    //         outPal[3 * i + 0] = (inPal[3 * i + 0] << 2) + (inPal[3 * i + 0] >> 4);
+    //         outPal[3 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
+    //         outPal[3 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
+    //     }
+    // }
 }

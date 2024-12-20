@@ -164,6 +164,10 @@ void *Disk::fetchItem(uint32 num) {
 	return _itemList[num];
 }
 
+uint16 *Disk::loadScriptFile(uint16 fileNr) {
+	return (uint16 *)loadFile(fileNr);
+}
+
 uint8 *Disk::getFileInfo(uint16 fileNr) {
 	uint16 i;
 	uint16 *dnrTbl16Ptr = (uint16 *)_dinnerTableArea;
@@ -214,7 +218,7 @@ void Disk::writeDinnerTableToFile() {
 		outfile << "File flags " << fileFlags << std::endl;
 		outfile << "File size " << fileSize << std::endl;
 		outfile << "File offset " << fileOffset << std::endl;
-		outfile << "Compressed flag " << cflag << std::endl;
+		outfile << "Compressed flag " << !cflag << std::endl; //if cflag == 0 then file is compressed, 1 == uncompressed
 		outfile << "Header flag " << fileHeader->flag << std::endl;
 		outfile << "Header s_x " << fileHeader->s_x << std::endl;
 		outfile << "Header s_y " << fileHeader->s_y << std::endl;
