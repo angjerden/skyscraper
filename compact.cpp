@@ -10,14 +10,13 @@ SkyCompact::SkyCompact(char* skyPath) {
     std::string cptFilePath(skyPath);
     cptFilePath.append(_cptFilename);
     _cptFile = fopen(cptFilePath.c_str(), "rb");
-    uint16 compactFileVersion;
-    std::fread(&compactFileVersion, 1, 2, _cptFile);
-    if (compactFileVersion != 0){
+    uint16 fileVersion = readUint16LE();
+    if (fileVersion != 0){
       std::cout << "Unknown sky.cpt version" << std::endl;
     }
 
     // Get number of data lists in compact
-    std::fread(&_numDataLists, 1, 2, _cptFile);
+    _numDataLists = readUint16LE();
 
     std::cout << "Found " << _numDataLists << " compact data lists." << std::endl;
 
@@ -30,40 +29,35 @@ SkyCompact::SkyCompact(char* skyPath) {
 
     // do memory allocation for each data list
     for (int i = 0; i < _numDataLists; i++) {
-      std::fread(&_dataListLen[i], 1, 2, _cptFile);
+      _dataListLen[i] = readUint16LE();
       _cptNames[i] = (char**)malloc(_dataListLen[i] * sizeof(char *));
       _cptSizes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
       _cptTypes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
       _compacts[i] = (Compact**)malloc(_dataListLen[i] * sizeof(Compact *));
     }
 
-    uint32 rawNumInts;
-    std::fread(&rawNumInts, 1, 4, _cptFile);
-    uint32 rawSize = rawNumInts * sizeof(uint16);
+    uint32 rawSize = readUint32LE() * sizeof(uint16);
     if (rawSize != 297206) {
       std::cout << "Wrong compact raw size." << std::endl;
     }
 	  uint16 *rawPos = _rawBuf = (uint16 *)malloc(rawSize);
 
-    uint32 srcSizeInts;
-    std::fread(&srcSizeInts, 1, 4, _cptFile);
-    uint32 srcSize = srcSizeInts * sizeof(uint16);
+    uint32 srcSize = readUint32LE() * sizeof(uint16);
     if (srcSize != 310992) {
       std::cout << "Wrong compact source size." << std::endl;
     }
 	  uint16 *srcBuf = (uint16 *)malloc(srcSize);
 	  uint16 *srcPos = srcBuf;
-    std::fread(srcBuf, 1, srcSize, _cptFile);
+    readRandom(srcBuf, srcSize);
 
-    uint32 asciiSize;
-    std::fread(&asciiSize, 1, 4, _cptFile);
+    uint32 asciiSize = readUint32LE();
     if (asciiSize != 42395) {
       std::cout << "Wrong compact ascii size." << std::endl;
     }
     
     char *asciiPos = _asciiBuf = (char *)malloc(asciiSize);
-    std::fread(_asciiBuf, 1, asciiSize, _cptFile);
-
+    readRandom(_asciiBuf, asciiSize);
+    
     // fill up with compact data
     for (uint32 lcnt = 0; lcnt < _numDataLists; lcnt++) {
       for (uint32 ecnt = 0; ecnt < _dataListLen[lcnt]; ecnt++) {
@@ -85,11 +79,10 @@ SkyCompact::SkyCompact(char* skyPath) {
     }
     free(srcBuf);
 
-    uint16 numDlincs;
-    std::fread(&numDlincs, 1, 2, _cptFile);
+    uint16 numDlincs = readUint16LE();
     uint16 *dlincBuf = (uint16 *)malloc(numDlincs * 2 * sizeof(uint16));
     uint16 *dlincPos = dlincBuf;
-    std::fread(dlincBuf, 1, numDlincs * 2 * sizeof(uint16), _cptFile);
+    readRandom(dlincBuf, numDlincs * 2 * sizeof(uint16));
     // these compacts don't actually exist but only point to other ones...
     uint16 cnt;
     for (cnt = 0; cnt < numDlincs; cnt++) {
@@ -105,17 +98,19 @@ SkyCompact::SkyCompact(char* skyPath) {
     free(dlincBuf);
 
     // fseek instead of reading and throwing diff data?
-    uint16 numDiffs;
-    std::fread(&numDiffs, 1, 2, _cptFile);
-    uint16 diffSize;
-    std::fread(&diffSize, 1, 2, _cptFile);
+    uint16 numDiffs = readUint16LE();
+    uint16 diffSize = readUint16LE();
     uint16 *diffBuf = (uint16 *)malloc(diffSize * sizeof(uint16));
-    std::fread(diffBuf, 1, diffSize * sizeof(uint16), _cptFile);
+    readRandom(diffBuf, diffSize * sizeof(uint16));
+    // not bothering checking for game version 288
     free(diffBuf);
 
-    std::fread(&_numSaveIds, 1, 2, _cptFile);
+    _numSaveIds = readUint16LE();
     _saveIds = (uint16 *)malloc(_numSaveIds * sizeof(uint16));
-    std::fread(_saveIds, 1, _numSaveIds * sizeof(uint16), _cptFile);
+    readRandom(_saveIds, _numSaveIds * sizeof(uint16));
+    // Don't think it's necessary to convert to LE_16
+    // for (cnt = 0; cnt < _numSaveIds; cnt++)
+    //   _saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
     _resetDataPos = std::ftell(_cptFile);
 
     checkAndFixOfficerBluntError();
@@ -141,7 +136,21 @@ SkyCompact::~SkyCompact() {
 	delete _cptFile;
 }
 
+uint16 SkyCompact::readUint16LE() {
+  uint16 value;
+  std::fread(&value, 1, 2, _cptFile);
+  return value;
+}
 
+uint32 SkyCompact::readUint32LE() {
+  uint32 value;
+  std:fread(&value, 1, 4, _cptFile);
+  return value;
+}
+
+uint32 SkyCompact::readRandom(void *ptr, uint32 len) {
+  std::fread(ptr, 1, len, _cptFile);
+}
 
 /* WORKAROUND for bug #2687:
 	The first release of scummvm with externalized, binary compact data has one broken 16 bit reference.

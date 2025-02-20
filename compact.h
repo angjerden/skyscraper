@@ -73,6 +73,9 @@ public:
 	uint16 giveNumDataLists();
 	uint16 giveDataListLen(uint16 listNum);
 	const char *nameForType(uint16 type);
+	uint16 readUint16LE();
+	uint32 readUint32LE();
+	uint32 readRandom(void *ptr, uint32 len);
 private:
 	void checkAndFixOfficerBluntError();
 

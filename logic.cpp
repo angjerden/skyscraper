@@ -30,29 +30,29 @@
 
 uint32 Logic::_scriptVariables[NUM_SKY_SCRIPTVARS];
 
-// void Logic::setupLogicTable() {
-// 	static const LogicTable logicTable[] = {
-// 		&Logic::nop,
-// 		&Logic::logicScript,	 // 1  script processor
-// 		&Logic::autoRoute,	 // 2  Make a route
-// 		&Logic::arAnim,	 // 3  Follow a route
-// 		&Logic::arTurn,	 // 4  Mega turns araound
-// 		&Logic::alt,		 // 5  Set up new get-to script
-// 		&Logic::anim,	 // 6  Follow a sequence
-// 		&Logic::turn,	 // 7  Mega turning
-// 		&Logic::cursor,	 // 8  id tracks the pointer
-// 		&Logic::talk,	 // 9  count down and animate
-// 		&Logic::listen,	 // 10 player waits for talking id
-// 		&Logic::stopped,	 // 11 wait for id to move
-// 		&Logic::choose,	 // 12 wait for player to click
-// 		&Logic::frames,	 // 13 animate just frames
-// 		&Logic::pause,	 // 14 Count down to 0 and go
-// 		&Logic::waitSync,	 // 15 Set to l_script when sync!=0
-// 		&Logic::simpleAnim,	 // 16 Module anim without x,y's
-// 	};
+void Logic::setupLogicTable() {
+	// static const LogicTable logicTable[] = {
+	// 	&Logic::nop,
+	// 	&Logic::logicScript,	 // 1  script processor
+	// 	&Logic::autoRoute,	 // 2  Make a route
+	// 	&Logic::arAnim,	 // 3  Follow a route
+	// 	&Logic::arTurn,	 // 4  Mega turns araound
+	// 	&Logic::alt,		 // 5  Set up new get-to script
+	// 	&Logic::anim,	 // 6  Follow a sequence
+	// 	&Logic::turn,	 // 7  Mega turning
+	// 	&Logic::cursor,	 // 8  id tracks the pointer
+	// 	&Logic::talk,	 // 9  count down and animate
+	// 	&Logic::listen,	 // 10 player waits for talking id
+	// 	&Logic::stopped,	 // 11 wait for id to move
+	// 	&Logic::choose,	 // 12 wait for player to click
+	// 	&Logic::frames,	 // 13 animate just frames
+	// 	&Logic::pause,	 // 14 Count down to 0 and go
+	// 	&Logic::waitSync,	 // 15 Set to l_script when sync!=0
+	// 	&Logic::simpleAnim,	 // 16 Module anim without x,y's
+	// };
 
-// 	_logicTable = logicTable;
-// }
+	// _logicTable = logicTable;
+}
 
 // Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
 Logic::Logic(SkyCompact *skyCompact, Disk *skyDisk) {
@@ -67,8 +67,8 @@ Logic::Logic(SkyCompact *skyCompact, Disk *skyDisk) {
 	// _skyGrid = new Grid(_skyDisk, _skyCompact);
 	// _skyAutoRoute = new AutoRoute(_skyGrid, _skyCompact);
 
-	// setupLogicTable();
-	// setupMcodeTable();
+	setupLogicTable();
+	setupMcodeTable();
 
 	memset(_objectList, 0, 30 * sizeof(uint32));
 
@@ -95,149 +95,186 @@ void Logic::initScreen0() {
 	// SkyEngine::_systemVars->currentMusic = 2;
 }
 
-// bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
-// 	_scriptVariables[CUR_SECTION] = sectionNo;
-// 	// SkyEngine::_systemVars->currentMusic = 0;
-
-// 	if (sectionNo == 5) //linc section - has different mouse icons
-// 		_skyMouse->replaceMouseCursors(60302);
-// 		_skyDisk->loadFile(60302);
-
-// 	if (sectionNo != _currentSection) {
-// 		_currentSection = sectionNo;
-
-// 		sectionNo++;
-// 		_skyMusic->loadSection((byte)sectionNo);
-// 		_skySound->loadSection((byte)sectionNo);
-// 		_skyGrid->loadGrids();
-// 		SkyEngine::_systemVars->systemFlags &= ~SF_GAME_RESTORED;
-// 	}
-
-// 	return true;
-// }
+void Logic::nop() {}
 
 
-// void Logic::setupMcodeTable() {
-// 	static const McodeTable mcodeTable[] = {
-// 		&Logic::fnCacheChip,
-// 		&Logic::fnCacheFast,
-// 		&Logic::fnDrawScreen,
-// 		&Logic::fnAr,
-// 		&Logic::fnArAnimate,
-// 		&Logic::fnIdle,
-// 		&Logic::fnInteract,
-// 		&Logic::fnStartSub,
-// 		&Logic::fnTheyStartSub,
-// 		&Logic::fnAssignBase,
-// 		&Logic::fnDiskMouse,
-// 		&Logic::fnNormalMouse,
-// 		&Logic::fnBlankMouse,
-// 		&Logic::fnCrossMouse,
-// 		&Logic::fnCursorRight,
-// 		&Logic::fnCursorLeft,
-// 		&Logic::fnCursorDown,
-// 		&Logic::fnOpenHand,
-// 		&Logic::fnCloseHand,
-// 		&Logic::fnGetTo,
-// 		&Logic::fnSetToStand,
-// 		&Logic::fnTurnTo,
-// 		&Logic::fnArrived,
-// 		&Logic::fnLeaving,
-// 		&Logic::fnSetAlternate,
-// 		&Logic::fnAltSetAlternate,
-// 		&Logic::fnKillId,
-// 		&Logic::fnNoHuman,
-// 		&Logic::fnAddHuman,
-// 		&Logic::fnAddButtons,
-// 		&Logic::fnNoButtons,
-// 		&Logic::fnSetStop,
-// 		&Logic::fnClearStop,
-// 		&Logic::fnPointerText,
-// 		&Logic::fnQuit,
-// 		&Logic::fnSpeakMe,
-// 		&Logic::fnSpeakMeDir,
-// 		&Logic::fnSpeakWait,
-// 		&Logic::fnSpeakWaitDir,
-// 		&Logic::fnChooser,
-// 		&Logic::fnHighlight,
-// 		&Logic::fnTextKill,
-// 		&Logic::fnStopMode,
-// 		&Logic::fnWeWait,
-// 		&Logic::fnSendSync,
-// 		&Logic::fnSendFastSync,
-// 		&Logic::fnSendRequest,
-// 		&Logic::fnClearRequest,
-// 		&Logic::fnCheckRequest,
-// 		&Logic::fnStartMenu,
-// 		&Logic::fnUnhighlight,
-// 		&Logic::fnFaceId,
-// 		&Logic::fnForeground,
-// 		&Logic::fnBackground,
-// 		&Logic::fnNewBackground,
-// 		&Logic::fnSort,
-// 		&Logic::fnNoSpriteEngine,
-// 		&Logic::fnNoSpritesA6,
-// 		&Logic::fnResetId,
-// 		&Logic::fnToggleGrid,
-// 		&Logic::fnPause,
-// 		&Logic::fnRunAnimMod,
-// 		&Logic::fnSimpleMod,
-// 		&Logic::fnRunFrames,
-// 		&Logic::fnAwaitSync,
-// 		&Logic::fnIncMegaSet,
-// 		&Logic::fnDecMegaSet,
-// 		&Logic::fnSetMegaSet,
-// 		&Logic::fnMoveItems,
-// 		&Logic::fnNewList,
-// 		&Logic::fnAskThis,
-// 		&Logic::fnRandom,
-// 		&Logic::fnPersonHere,
-// 		&Logic::fnToggleMouse,
-// 		&Logic::fnMouseOn,
-// 		&Logic::fnMouseOff,
-// 		&Logic::fnFetchX,
-// 		&Logic::fnFetchY,
-// 		&Logic::fnTestList,
-// 		&Logic::fnFetchPlace,
-// 		&Logic::fnCustomJoey,
-// 		&Logic::fnSetPalette,
-// 		&Logic::fnTextModule,
-// 		&Logic::fnChangeName,
-// 		&Logic::fnMiniLoad,
-// 		&Logic::fnFlushBuffers,
-// 		&Logic::fnFlushChip,
-// 		&Logic::fnSaveCoods,
-// 		&Logic::fnPlotGrid,
-// 		&Logic::fnRemoveGrid,
-// 		&Logic::fnEyeball,
-// 		&Logic::fnCursorUp,
-// 		&Logic::fnLeaveSection,
-// 		&Logic::fnEnterSection,
-// 		&Logic::fnRestoreGame,
-// 		&Logic::fnRestartGame,
-// 		&Logic::fnNewSwingSeq,
-// 		&Logic::fnWaitSwingEnd,
-// 		&Logic::fnSkipIntroCode,
-// 		&Logic::fnBlankScreen,
-// 		&Logic::fnPrintCredit,
-// 		&Logic::fnLookAt,
-// 		&Logic::fnLincTextModule,
-// 		&Logic::fnTextKill2,
-// 		&Logic::fnSetFont,
-// 		&Logic::fnStartFx,
-// 		&Logic::fnStopFx,
-// 		&Logic::fnStartMusic,
-// 		&Logic::fnStopMusic,
-// 		&Logic::fnFadeDown,
-// 		&Logic::fnFadeUp,
-// 		&Logic::fnQuitToDos,
-// 		&Logic::fnPauseFx,
-// 		&Logic::fnUnPauseFx,
-// 		&Logic::fnPrintf
-// 	};
+static uint16 clickTable[46] = {
+	ID_FOSTER,
+	ID_JOEY,
+	ID_JOBS,
+	ID_LAMB,
+	ID_ANITA,
+	ID_SON,
+	ID_DAD,
+	ID_MONITOR,
+	ID_SHADES,
+	MINI_SS,
+	FULL_SS,
+	ID_FOREMAN,
+	ID_RADMAN,
+	ID_GALLAGER_BEL,
+	ID_BURKE,
+	ID_BODY,
+	ID_HOLO,
+	ID_TREVOR,
+	ID_ANCHOR,
+	ID_WRECK_GUARD,
+	ID_SKORL_GUARD,
 
-// 	_mcodeTable = mcodeTable;
-// }
+	// BASE LEVEL
+	ID_SC30_HENRI,
+	ID_SC31_GUARD,
+	ID_SC32_VINCENT,
+	ID_SC32_GARDENER,
+	ID_SC32_BUZZER,
+	ID_SC36_BABS,
+	ID_SC36_BARMAN,
+	ID_SC36_COLSTON,
+	ID_SC36_GALLAGHER,
+	ID_SC36_JUKEBOX,
+	ID_DANIELLE,
+	ID_SC42_JUDGE,
+	ID_SC42_CLERK,
+	ID_SC42_PROSECUTION,
+	ID_SC42_JOBSWORTH,
+
+	// UNDERWORLD
+	ID_MEDI,
+	ID_WITNESS,
+	ID_GALLAGHER,
+	ID_KEN,
+	ID_SC76_ANDROID_2,
+	ID_SC76_ANDROID_3,
+	ID_SC81_FATHER,
+	ID_SC82_JOBSWORTH,
+
+	// LINC WORLD
+	ID_HOLOGRAM_B,
+	12289
+};
+
+
+void Logic::setupMcodeTable() {
+	// static const McodeTable mcodeTable[] = {
+	// 	&Logic::fnCacheChip,
+	// 	&Logic::fnCacheFast,
+	// 	&Logic::fnDrawScreen,
+	// 	&Logic::fnAr,
+	// 	&Logic::fnArAnimate,
+	// 	&Logic::fnIdle,
+	// 	&Logic::fnInteract,
+	// 	&Logic::fnStartSub,
+	// 	&Logic::fnTheyStartSub,
+	// 	&Logic::fnAssignBase,
+	// 	&Logic::fnDiskMouse,
+	// 	&Logic::fnNormalMouse,
+	// 	&Logic::fnBlankMouse,
+	// 	&Logic::fnCrossMouse,
+	// 	&Logic::fnCursorRight,
+	// 	&Logic::fnCursorLeft,
+	// 	&Logic::fnCursorDown,
+	// 	&Logic::fnOpenHand,
+	// 	&Logic::fnCloseHand,
+	// 	&Logic::fnGetTo,
+	// 	&Logic::fnSetToStand,
+	// 	&Logic::fnTurnTo,
+	// 	&Logic::fnArrived,
+	// 	&Logic::fnLeaving,
+	// 	&Logic::fnSetAlternate,
+	// 	&Logic::fnAltSetAlternate,
+	// 	&Logic::fnKillId,
+	// 	&Logic::fnNoHuman,
+	// 	&Logic::fnAddHuman,
+	// 	&Logic::fnAddButtons,
+	// 	&Logic::fnNoButtons,
+	// 	&Logic::fnSetStop,
+	// 	&Logic::fnClearStop,
+	// 	&Logic::fnPointerText,
+	// 	&Logic::fnQuit,
+	// 	&Logic::fnSpeakMe,
+	// 	&Logic::fnSpeakMeDir,
+	// 	&Logic::fnSpeakWait,
+	// 	&Logic::fnSpeakWaitDir,
+	// 	&Logic::fnChooser,
+	// 	&Logic::fnHighlight,
+	// 	&Logic::fnTextKill,
+	// 	&Logic::fnStopMode,
+	// 	&Logic::fnWeWait,
+	// 	&Logic::fnSendSync,
+	// 	&Logic::fnSendFastSync,
+	// 	&Logic::fnSendRequest,
+	// 	&Logic::fnClearRequest,
+	// 	&Logic::fnCheckRequest,
+	// 	&Logic::fnStartMenu,
+	// 	&Logic::fnUnhighlight,
+	// 	&Logic::fnFaceId,
+	// 	&Logic::fnForeground,
+	// 	&Logic::fnBackground,
+	// 	&Logic::fnNewBackground,
+	// 	&Logic::fnSort,
+	// 	&Logic::fnNoSpriteEngine,
+	// 	&Logic::fnNoSpritesA6,
+	// 	&Logic::fnResetId,
+	// 	&Logic::fnToggleGrid,
+	// 	&Logic::fnPause,
+	// 	&Logic::fnRunAnimMod,
+	// 	&Logic::fnSimpleMod,
+	// 	&Logic::fnRunFrames,
+	// 	&Logic::fnAwaitSync,
+	// 	&Logic::fnIncMegaSet,
+	// 	&Logic::fnDecMegaSet,
+	// 	&Logic::fnSetMegaSet,
+	// 	&Logic::fnMoveItems,
+	// 	&Logic::fnNewList,
+	// 	&Logic::fnAskThis,
+	// 	&Logic::fnRandom,
+	// 	&Logic::fnPersonHere,
+	// 	&Logic::fnToggleMouse,
+	// 	&Logic::fnMouseOn,
+	// 	&Logic::fnMouseOff,
+	// 	&Logic::fnFetchX,
+	// 	&Logic::fnFetchY,
+	// 	&Logic::fnTestList,
+	// 	&Logic::fnFetchPlace,
+	// 	&Logic::fnCustomJoey,
+	// 	&Logic::fnSetPalette,
+	// 	&Logic::fnTextModule,
+	// 	&Logic::fnChangeName,
+	// 	&Logic::fnMiniLoad,
+	// 	&Logic::fnFlushBuffers,
+	// 	&Logic::fnFlushChip,
+	// 	&Logic::fnSaveCoods,
+	// 	&Logic::fnPlotGrid,
+	// 	&Logic::fnRemoveGrid,
+	// 	&Logic::fnEyeball,
+	// 	&Logic::fnCursorUp,
+	// 	&Logic::fnLeaveSection,
+	// 	&Logic::fnEnterSection,
+	// 	&Logic::fnRestoreGame,
+	// 	&Logic::fnRestartGame,
+	// 	&Logic::fnNewSwingSeq,
+	// 	&Logic::fnWaitSwingEnd,
+	// 	&Logic::fnSkipIntroCode,
+	// 	&Logic::fnBlankScreen,
+	// 	&Logic::fnPrintCredit,
+	// 	&Logic::fnLookAt,
+	// 	&Logic::fnLincTextModule,
+	// 	&Logic::fnTextKill2,
+	// 	&Logic::fnSetFont,
+	// 	&Logic::fnStartFx,
+	// 	&Logic::fnStopFx,
+	// 	&Logic::fnStartMusic,
+	// 	&Logic::fnStopMusic,
+	// 	&Logic::fnFadeDown,
+	// 	&Logic::fnFadeUp,
+	// 	&Logic::fnQuitToDos,
+	// 	&Logic::fnPauseFx,
+	// 	&Logic::fnUnPauseFx,
+	// 	&Logic::fnPrintf
+	// };
+
+	// _mcodeTable = mcodeTable;
+}
 
 static const uint32 forwardList1b[] = {
 	JOBS_SPEECH,
