@@ -90,9 +90,29 @@ Logic::~Logic() {
 }
 
 void Logic::initScreen0() {
-	// fnEnterSection(0, 0, 0);
+	fnEnterSection(0, 0, 0);
 	// _skyMusic->startMusic(2);
 	// SkyEngine::_systemVars->currentMusic = 2;
+}
+
+bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
+	_scriptVariables[CUR_SECTION] = sectionNo;
+	// SkyEngine::_systemVars->currentMusic = 0;
+
+	// if (sectionNo == 5) //linc section - has different mouse icons
+		// _skyMouse->replaceMouseCursors(60302);
+
+	// if ((sectionNo != _currentSection) || (SkyEngine::_systemVars->systemFlags & SF_GAME_RESTORED)) {
+		// _currentSection = sectionNo;
+
+		// sectionNo++;
+		// _skyMusic->loadSection((byte)sectionNo);
+		// _skySound->loadSection((byte)sectionNo);
+		// _skyGrid->loadGrids();
+		// SkyEngine::_systemVars->systemFlags &= ~SF_GAME_RESTORED;
+	// }
+
+	return true;
 }
 
 void Logic::nop() {}
