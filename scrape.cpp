@@ -12,6 +12,7 @@ int main(int argc, char **argv){
 
     Scraper* scraper = new Scraper(skyPath);
     scraper->scrapeAssetsLogically();
+    scraper->scrapeAssetsHardcoded();
 
     // Loop through each entry in sky.dsk
     // Store entry in some data structure

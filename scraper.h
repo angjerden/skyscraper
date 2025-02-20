@@ -5,6 +5,9 @@
 #include "writer.h"
 #include <fstream>
 
+#ifndef SKY_SCRAPER_H
+#define SKY_SCRAPER_H
+
 class Disk;
 class SkyCompact;
 class Logic;
@@ -21,3 +24,5 @@ class Scraper {
         SkyCompact* _skyCompact;
         Logic* _skyLogic;
 };
+
+#endif
