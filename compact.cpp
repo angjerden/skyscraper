@@ -149,7 +149,7 @@ uint32 SkyCompact::readUint32LE() {
 }
 
 uint32 SkyCompact::readRandom(void *ptr, uint32 len) {
-  std::fread(ptr, 1, len, _cptFile);
+  return std::fread(ptr, 1, len, _cptFile);
 }
 
 /* WORKAROUND for bug #2687:
@@ -191,3 +191,85 @@ const char *const SkyCompact::_typeNames[NUM_CPT_TYPES] = {
 	"AR BUFFER",
 	"MAIN LIST"
 };
+
+void SkyCompact::writeCompactsToFile() {
+  std::ofstream outfile;
+  outfile.open("compacts.txt");
+
+  for (uint16 i = 0; i < _numDataLists; i++) {
+    std::cout << "Writing compacts for list " << i << std::endl;
+    for (uint16 j = 0; j < _dataListLen[i]; j++) {
+      uint16 cptType = _cptTypes[i][j];
+      const char* cptName = _cptNames[i][j];
+      const char* typeName = _typeNames[cptType];
+      uint16 cptSize = _cptSizes[i][j]; 
+      Compact* compact = _compacts[i][j];
+      if (cptSize == 0) continue;
+      outfile << "Compact " << i << " " << j << " [" << typeName << "] (" << cptName << ") " << "Size " << cptSize << std::endl;
+      outfile << "Logic " << compact->logic << std::endl;
+      outfile << "Status " << compact->status << std::endl;
+      outfile << "Sync " << compact->sync << std::endl;
+      outfile << "Screen " << compact->screen << std::endl;
+      outfile << "Place " << compact->place << std::endl;
+      outfile << "GetToTableId " << compact->getToTableId << std::endl;
+      outfile << "Xcood " << compact->xcood << std::endl;
+      outfile << "Ycood " << compact->ycood << std::endl;
+      outfile << "Frame " << compact->frame << std::endl;
+      outfile << "CursorText " << compact->cursorText << std::endl;
+      outfile << "MouseOn " << compact->mouseOn << std::endl;
+      outfile << "MouseOff " << compact->mouseOff << std::endl;
+      outfile << "MouseClick " << compact->mouseClick << std::endl;
+      outfile << "MouseRelX " << compact->mouseRelX << std::endl;
+      outfile << "MouseRelY " << compact->mouseRelY << std::endl;
+      outfile << "MouseSizeX " << compact->mouseSizeX << std::endl;
+      outfile << "MouseSizeY " << compact->mouseSizeY << std::endl;
+      outfile << "ActionScript " << compact->actionScript << std::endl;
+      outfile << "UpFlag " << compact->upFlag << std::endl;
+      outfile << "DownFlag " << compact->downFlag << std::endl;
+      outfile << "GetToFlag " << compact->getToFlag << std::endl;
+      outfile << "Flag " << compact->flag << std::endl;
+      outfile << "Mood " << compact->mood << std::endl;
+      outfile << "GrafixProgId " << compact->grafixProgId << std::endl;
+      outfile << "GrafixProgPos " << compact->grafixProgPos << std::endl;
+      outfile << "Offset " << compact->offset << std::endl;
+      outfile << "Mode " << compact->mode << std::endl;
+      outfile << "BaseSub " << compact->baseSub << std::endl;
+      outfile << "BaseSub_Off " << compact->baseSub_off << std::endl;
+      outfile << "ActionSub " << compact->actionSub << std::endl;
+      outfile << "ActionSub_Off " << compact->actionSub_off << std::endl;
+      outfile << "GetToSub " << compact->getToSub << std::endl;
+      outfile << "GetToSub_Off " << compact->getToSub_off << std::endl;
+      outfile << "ExtraSub " << compact->extraSub << std::endl;
+      outfile << "ExtraSub_Off " << compact->extraSub_off << std::endl;
+      outfile << "Dir " << compact->dir << std::endl;
+      outfile << "StopScript " << compact->stopScript << std::endl;
+      outfile << "MiniBump " << compact->miniBump << std::endl;
+      outfile << "Leaving " << compact->leaving << std::endl;
+      outfile << "AtWatch " << compact->atWatch << std::endl;
+      outfile << "AtWas " << compact->atWas << std::endl;
+      outfile << "Alt " << compact->alt << std::endl;
+      outfile << "Request " << compact->request << std::endl;
+      outfile << "SpWidth_xx " << compact->spWidth_xx << std::endl;
+      outfile << "SpColor " << compact->spColor << std::endl;
+      outfile << "SpTextId " << compact->spTextId << std::endl;
+      outfile << "SpTime " << compact->spTime << std::endl;
+      outfile << "ArAnimIndex " << compact->arAnimIndex << std::endl;
+      outfile << "TurnProgId " << compact->turnProgId << std::endl;
+      outfile << "TurnProgPos " << compact->turnProgPos << std::endl;
+      outfile << "WaitingFor " << compact->waitingFor << std::endl;
+      outfile << "ArTargetX " << compact->arTargetX << std::endl;
+      outfile << "ArTargetY " << compact->arTargetY << std::endl;
+      outfile << "AnimScratchId " << compact->animScratchId << std::endl;
+      outfile << "MegaSet " << compact->megaSet << std::endl;
+      // outfile << "MegaSet0 " << compact->megaSet0 << std::endl;
+      // outfile << "MegaSet1 " << compact->megaSet1 << std::endl;
+      // outfile << "MegaSet2 " << compact->megaSet2 << std::endl;
+      // outfile << "MegaSet3 " << compact->megaSet3 << std::endl;
+      outfile << std::endl;
+      // outfile << "Compact " << cptName << " [" << typeName << "] (" << cptId << "=" << (cptId >> 12) << "," << (cptId & 0xFFF) << ")" << std::endl;
+    }
+  }
+
+  outfile.close();
+
+}

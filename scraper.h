@@ -19,6 +19,8 @@ class Scraper {
         ~Scraper();
         void scrapeAssetsLogically();
         void scrapeAssetsHardcoded();
+        void writeDinnerTableToFile();
+        void writeCompactsToFile();
     protected:
         Disk* _skyDisk;
         SkyCompact* _skyCompact;

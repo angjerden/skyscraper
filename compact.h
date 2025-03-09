@@ -76,6 +76,7 @@ public:
 	uint16 readUint16LE();
 	uint32 readUint32LE();
 	uint32 readRandom(void *ptr, uint32 len);
+	void writeCompactsToFile();
 private:
 	void checkAndFixOfficerBluntError();
 

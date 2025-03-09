@@ -31,27 +31,27 @@
 uint32 Logic::_scriptVariables[NUM_SKY_SCRIPTVARS];
 
 void Logic::setupLogicTable() {
-	// static const LogicTable logicTable[] = {
-	// 	&Logic::nop,
-	// 	&Logic::logicScript,	 // 1  script processor
-	// 	&Logic::autoRoute,	 // 2  Make a route
-	// 	&Logic::arAnim,	 // 3  Follow a route
-	// 	&Logic::arTurn,	 // 4  Mega turns araound
-	// 	&Logic::alt,		 // 5  Set up new get-to script
-	// 	&Logic::anim,	 // 6  Follow a sequence
-	// 	&Logic::turn,	 // 7  Mega turning
-	// 	&Logic::cursor,	 // 8  id tracks the pointer
-	// 	&Logic::talk,	 // 9  count down and animate
-	// 	&Logic::listen,	 // 10 player waits for talking id
-	// 	&Logic::stopped,	 // 11 wait for id to move
-	// 	&Logic::choose,	 // 12 wait for player to click
-	// 	&Logic::frames,	 // 13 animate just frames
-	// 	&Logic::pause,	 // 14 Count down to 0 and go
-	// 	&Logic::waitSync,	 // 15 Set to l_script when sync!=0
-	// 	&Logic::simpleAnim,	 // 16 Module anim without x,y's
-	// };
+	static const LogicTable logicTable[] = {
+		&Logic::nop,
+		&Logic::logicScript,	 // 1  script processor
+		&Logic::nop, //		&Logic::autoRoute,	 // 2  Make a route
+		&Logic::nop, // &Logic::arAnim,	 // 3  Follow a route
+		&Logic::nop, //	&Logic::arTurn,	 // 4  Mega turns araound
+		&Logic::nop, //	&Logic::alt,		 // 5  Set up new get-to script
+		&Logic::nop, //	&Logic::anim,	 // 6  Follow a sequence
+		&Logic::nop, //	&Logic::turn,	 // 7  Mega turning
+		&Logic::nop, //	&Logic::cursor,	 // 8  id tracks the pointer
+		&Logic::nop, //	&Logic::talk,	 // 9  count down and animate
+		&Logic::nop, //	&Logic::listen,	 // 10 player waits for talking id
+		&Logic::nop, //	&Logic::stopped,	 // 11 wait for id to move
+		&Logic::nop, //	&Logic::choose,	 // 12 wait for player to click
+		&Logic::nop, //	&Logic::frames,	 // 13 animate just frames
+		&Logic::nop, //	&Logic::pause,	 // 14 Count down to 0 and go
+		&Logic::nop, //	&Logic::waitSync,	 // 15 Set to l_script when sync!=0
+		&Logic::nop, //	&Logic::simpleAnim,	 // 16 Module anim without x,y's
+	};
 
-	// _logicTable = logicTable;
+	_logicTable = logicTable;
 }
 
 // Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
@@ -116,6 +116,8 @@ bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 }
 
 void Logic::nop() {}
+
+void Logic::logicScript() {}
 
 
 static uint16 clickTable[46] = {

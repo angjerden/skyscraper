@@ -16,6 +16,9 @@ Scraper::~Scraper() {
 
 void Scraper::scrapeAssetsLogically() {
     _skyLogic->initScreen0();
+
+    // get texts and speeches
+    uint16* talkTable = (uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
 }
 
 // get hardcoded assets from the intro and elsewhere
@@ -33,4 +36,12 @@ void Scraper::scrapeAssetsHardcoded() {
     Writer::writeBMP("shaman.bmp", shamanScr, shamanPal);
     // linc mouse cursors
     uint8* lincCursors = _skyDisk->loadFile(60302);
+}
+
+void Scraper::writeDinnerTableToFile() {
+    _skyDisk->writeDinnerTableToFile();
+}
+
+void Scraper::writeCompactsToFile() {
+    _skyCompact->writeCompactsToFile();
 }
