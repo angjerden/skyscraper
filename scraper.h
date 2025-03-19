@@ -18,6 +18,7 @@ class Scraper {
         Scraper(char* skyPath);
         ~Scraper();
         void scrapeAssetsLogically();
+        void scrapeAssetsFromLogicScripts();
         void scrapeAssetsHardcoded();
         void writeDinnerTableToFile();
         void writeCompactsToFile();

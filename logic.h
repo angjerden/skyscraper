@@ -22,6 +22,8 @@
 #ifndef SKY_LOGIC_H
 #define SKY_LOGIC_H
 
+#include <map>
+
 struct Compact;
 
 enum scriptVariableOffsets {
@@ -147,12 +149,18 @@ public:
 	uint16 script(uint16 scriptNo, uint16 offset);
 	void initScreen0();
 	void parseSaveData(uint32 *data);
+	// skyscraper functions
+	void scrapeAssetsFromCompacts();
+	void scrapeCompact(Compact *compact);
+	uint16 scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset);
 
 private:
 	void setupLogicTable();
 	void setupMcodeTable();
+	void setupMcodeMap();
 	const LogicTable *_logicTable;
 	const McodeTable *_mcodeTable;
+	const std::map<uint16, std::string> _mcodeMap;
 
 protected:
 	void push(uint32);

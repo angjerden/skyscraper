@@ -79,3 +79,7 @@ void Scraper::scrapeMIDI() {
         uint16 channelDataStart = READ_LE_UINT16((uint16*)channelData + i) + _musicDataLoc;
     }
 }
+
+void Scraper::scrapeAssetsFromLogicScripts() {
+    _skyLogic->scrapeAssetsFromCompacts();
+}

@@ -19,13 +19,18 @@
  *
  */
 
+#include "assert.h"
+#include "compact.h"
+#include "disk.h"
 #include "endian.h"
+#include <iterator>
 #include "logic.h"
 #include "skydefs.h"
 #include "util.h"
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
+// #include <map>
 
 
 uint32 Logic::_scriptVariables[NUM_SKY_SCRIPTVARS];
@@ -69,6 +74,7 @@ Logic::Logic(SkyCompact *skyCompact, Disk *skyDisk) {
 
 	setupLogicTable();
 	setupMcodeTable();
+	setupMcodeMap();
 
 	memset(_objectList, 0, 30 * sizeof(uint32));
 
@@ -118,6 +124,229 @@ bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 void Logic::nop() {}
 
 void Logic::logicScript() {}
+
+void Logic::scrapeCompact(Compact* compact) {
+	/// Process the current mega's script
+	/// If the script finishes then drop back a level
+	uint16 mode = compact->mode; // get pointer to current script
+	uint16 scriptNo = SkyCompact::getSub(compact, mode);
+	uint16 offset   = SkyCompact::getSub(compact, mode + 2);
+
+	offset = scrapeScript(compact, scriptNo, offset);
+	SkyCompact::setSub(compact, mode + 2, offset);
+
+	if (!offset) // script finished
+		compact->mode -= 4;
+	else if (compact->mode == mode)
+		return;
+
+}
+
+void Logic::scrapeAssetsFromCompacts() {
+	uint16 numDataLists = _skyCompact->giveNumDataLists();
+	// for (uint16 i = 0; i < numDataLists; i++) {
+	// 	uint16 dataListLen = _skyCompact->giveDataListLen(i);
+	// 	for (uint16 j = 0; j < dataListLen; j++) {
+	// 		Compact* compact = _skyCompact->getCompactByIndexes(i, j);
+	// 		scrapeCompact(compact);
+	// 	}
+	// }
+	uint16 i = 1;
+	uint16 j = 4; // get mini_so compact to test with
+	scrapeCompact(_skyCompact->getCompactByIndexes(i, j));
+}
+
+uint16 Logic::scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset) {
+	do {
+		bool restartScript = false;
+
+		/// process a script
+		/// low level interface to interpreter
+		uint16 moduleNo = scriptNo >> 12;
+		uint16 *scriptData = _moduleList[moduleNo]; // get module address
+
+		if (!scriptData) { // We need to load the script module
+			_moduleList[moduleNo] = (uint16*)_skyDisk->loadFile(moduleNo + F_MODULE_0);
+			scriptData = _moduleList[moduleNo];
+		}
+
+		uint16* moduleStart = scriptData;
+
+		// Check whether we have an offset or what
+		if (offset)
+			scriptData = moduleStart + offset;
+		else
+			scriptData += scriptData[scriptNo & 0x0FFF];
+
+		uint32 a = 0, b = 0, c = 0;
+		uint16 command, s;
+
+		while(!restartScript) {
+			command = *scriptData++; // get a command
+			// Debug::script(command, scriptData);
+
+			switch (command) {
+			case 0: // push_variable
+				push( _scriptVariables[*scriptData++ / 4] );
+				break;
+			case 1: // less_than
+				a = pop();
+				b = pop();
+				if (a > b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 2: // push_number
+				push(*scriptData++);
+				break;
+			case 3: // not_equal
+				a = pop();
+				b = pop();
+				if (a != b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 4: // if_and
+				a = pop();
+				b = pop();
+				if (a && b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 5: // skip_zero
+				s = *scriptData++;
+
+				a = pop();
+				if (!a)
+					scriptData += s / 2;
+				break;
+			case 6: // pop_var
+				b = _scriptVariables[*scriptData++ / 4] = pop();
+				break;
+			case 7: // minus
+				a = pop();
+				b = pop();
+				push(b-a);
+				break;
+			case 8: // plus
+				a = pop();
+				b = pop();
+				push(b+a);
+				break;
+			case 9: // skip_always
+				s = *scriptData++;
+				scriptData += s / 2;
+				break;
+			case 10: // if_or
+				a = pop();
+				b = pop();
+				if (a || b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 11: // call_mcode
+				{
+					a = *scriptData++;
+					// assert(a <= 3);
+					// No, I did not forget the "break"s
+					switch (a) {
+					case 3:
+						c = pop();
+						// fall through
+					case 2:
+						b = pop();
+						// fall through
+					case 1:
+						a = pop();
+						// fall through
+					default:
+						break;
+					}
+
+					uint16 mcode = *scriptData++ / 4; // get mcode number
+					// Debug::mcode(mcode, a, b, c);
+
+					Compact *saveCpt = compact;
+					// bool ret = (this->*_mcodeTable[mcode]) (a, b, c);
+					// get value of key in map
+					
+					if(_mcodeMap.size() > mcode){
+						std::cout << _mcodeMap.at(mcode) << a << b << c << std::endl;
+					}
+					compact = saveCpt;
+
+					bool ret = true;
+
+					if (!ret)
+						offset = scriptData - moduleStart;
+				}
+				break;
+			case 12: // more_than
+				a = pop();
+				b = pop();
+				if (a < b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 14: // switch
+				c = s = *scriptData++; // get number of cases
+
+				a = pop(); // and value to switch on
+
+				do {
+					if (a == *scriptData) {
+						scriptData += scriptData[1] / 2;
+						scriptData++;
+						break;
+					}
+					scriptData += 2;
+				} while (--s);
+
+				if (s == 0)
+					scriptData += *scriptData / 2; // use the default
+				break;
+			case 15: // push_offset
+				push( *(uint16 *)_skyCompact->getCompactElem(compact, *scriptData++) );
+				break;
+			case 16: // pop_offset
+				// pop a value into a compact
+				*(uint16 *)_skyCompact->getCompactElem(compact, *scriptData++) = (uint16)pop();
+				break;
+			case 17: // is_equal
+				a = pop();
+				b = pop();
+				if (a == b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 18: { // skip_nz
+					int16 t = *scriptData++;
+					a = pop();
+					if (a)
+						scriptData += t / 2;
+					break;
+				}
+			case 13:
+			case 19: // script_exit
+				return 0;
+			case 20: // restart_script
+				offset = 0;
+				restartScript = true;
+				break;
+			default:
+				std::cout << "Unknown script command: " << command << std::endl;
+				// error("Unknown script command: %d", command);
+			}
+		}
+	} while (true);
+}
+
 
 
 static uint16 clickTable[46] = {
@@ -175,6 +404,67 @@ static uint16 clickTable[46] = {
 	12289
 };
 
+void Logic::push(uint32 a) {
+	if (_stackPtr > ARRAYSIZE(_stack) - 2)
+		std::cout << "Stack overflow" << std::endl;
+		// error("Stack overflow");
+	_stack[_stackPtr++] = a;
+}
+
+uint32 Logic::pop() {
+	if (_stackPtr < 1 || _stackPtr > ARRAYSIZE(_stack) - 1)
+		std::cout << "No items on Stack to pop" << std::endl;
+		// error("No items on Stack to pop");
+	return _stack[--_stackPtr];
+}
+
+void Logic::setupMcodeMap() {
+	static const std::map<uint16, std::string> _mcodeMap = {
+		{0, "fnCacheChip"},
+		{1, "fnCacheFast"},
+		{2, "fnDrawScreen"},
+		{3, "fnAr"},
+		{4, "fnArAnimate"},
+		{5, "fnIdle"},
+		{6, "fnInteract"},
+		{7, "fnStartSub"},
+		{8, "fnTheyStartSub"},
+		{9, "fnAssignBase"},
+		{10, "fnDiskMouse"},
+		{11, "fnNormalMouse"},
+		{12, "fnBlankMouse"},
+		{13, "fnCrossMouse"},
+		{14, "fnCursorRight"},
+		{15, "fnCursorLeft"},
+		{16, "fnCursorDown"},
+		{17, "fnOpenHand"},
+		{18, "fnCloseHand"},
+		{19, "fnGetTo"},
+		{20, "fnSetToStand"},
+		{21, "fnTurnTo"},
+		{22, "fnArrived"},
+		{23, "fnLeaving"},
+		{24, "fnSetAlternate"},
+		{25, "fnAltSetAlternate"},
+		{26, "fnKillId"},
+		{27, "fnNoHuman"},
+		{28, "fnAddHuman"},
+		{29, "fnAddButtons"},
+		{30, "fnNoButtons"},
+		{31, "fnSetStop"},
+		{32, "fnClearStop"},
+		{33, "fnPointerText"},
+		{34, "fnQuit"},
+		{35, "fnSpeakMe"},
+		{36, "fnSpeakMeDir"},
+		{37, "fnSpeakWait"},
+		{38, "fnSpeakWaitDir"},
+		{39, "fnChooser"},
+		{40, "fnHighlight"},
+		{41, "fnTextKill"},
+		{42, "fnStopMode"}
+	};
+}
 
 void Logic::setupMcodeTable() {
 	// static const McodeTable mcodeTable[] = {
