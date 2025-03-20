@@ -4,7 +4,8 @@
 Scraper::Scraper(char* skyPath) {
     _skyDisk = new Disk(skyPath);
     _skyCompact = new SkyCompact(skyPath);
-    _skyLogic = new Logic(_skyCompact, _skyDisk);
+    _skyText = new Text(_skyDisk, _skyCompact);
+    _skyLogic = new Logic(_skyCompact, _skyDisk, _skyText);
 
 }
 
@@ -12,6 +13,7 @@ Scraper::~Scraper() {
     delete _skyCompact;
     delete _skyDisk;
     delete _skyLogic;
+    delete _skyText;
 }
 
 void Scraper::scrapeAssetsLogically() {

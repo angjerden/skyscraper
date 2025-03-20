@@ -285,7 +285,8 @@ uint16 SkyCompact::getSub(Compact *cpt, uint16 mode) {
 		return cpt->extraSub_off;
 	default:
 		// error("Invalid Mode (%d)", mode);
-    std::cout << "Invalid Mode (" << mode << ")" << std::endl;
+    	std::cout << "Invalid Mode (" << mode << ")" << std::endl;
+		return 0;
 	}
 }
 
@@ -359,7 +360,8 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 	off -= TURNTABLE_SIZE;
 
 	// error("Offset %X out of bounds of compact", (int)(off + COMPACT_SIZE + 4 * MEGASET_SIZE + 4 * TURNTABLE_SIZE));
-  std::cout << "Offset " << (int)(off + COMPACT_SIZE + 4 * MEGASET_SIZE + 4 * TURNTABLE_SIZE) << " out of bounds of compact" << std::endl;
+  	std::cout << "Offset " << (int)(off + COMPACT_SIZE + 4 * MEGASET_SIZE + 4 * TURNTABLE_SIZE) << " out of bounds of compact" << std::endl;
+	return 0;
 }
 
 Compact* SkyCompact::fetchCpt(uint16 cptId) {
@@ -383,6 +385,10 @@ uint16 SkyCompact::giveDataListLen(uint16 listNum) {
 
 Compact* SkyCompact::getCompactByIndexes(uint16 list, uint16 index){
   return _compacts[list][index];
+}
+
+uint16 SkyCompact::getCompactSize(uint16 list, uint16 index){
+  return _cptSizes[list][index];
 }
 
 const char *const SkyCompact::_typeNames[NUM_CPT_TYPES] = {

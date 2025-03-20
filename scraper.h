@@ -2,6 +2,7 @@
 #include "compact.h"
 #include "disk.h"
 #include "logic.h"
+#include "text.h"
 #include "writer.h"
 #include <fstream>
 
@@ -11,6 +12,7 @@
 class Disk;
 class SkyCompact;
 class Logic;
+class Text;
 
 
 class Scraper {
@@ -27,6 +29,7 @@ class Scraper {
         Disk* _skyDisk;
         SkyCompact* _skyCompact;
         Logic* _skyLogic;
+        Text* _skyText;
 };
 
 #endif

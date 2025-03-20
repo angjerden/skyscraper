@@ -29,6 +29,7 @@
 #include "util.h"
 #include <string.h>
 #include <stdio.h>
+#include "text.h"
 #include <iostream>
 // #include <map>
 
@@ -60,12 +61,12 @@ void Logic::setupLogicTable() {
 }
 
 // Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
-Logic::Logic(SkyCompact *skyCompact, Disk *skyDisk) {
+Logic::Logic(SkyCompact *skyCompact, Disk *skyDisk, Text* skyText) {
 
 	_skyCompact = skyCompact;
 	// _skyScreen = skyScreen;
 	_skyDisk = skyDisk;
-	// _skyText = skyText;
+	_skyText = skyText;
 	// _skyMusic = skyMusic;
 	// _skySound = skySound;
 	// _skyMouse = skyMouse;
@@ -125,38 +126,44 @@ void Logic::nop() {}
 
 void Logic::logicScript() {}
 
-void Logic::scrapeCompact(Compact* compact) {
+void Logic::scrapeCompact(uint16 list, uint16 index) {
 	/// Process the current mega's script
 	/// If the script finishes then drop back a level
-	uint16 mode = compact->mode; // get pointer to current script
-	uint16 scriptNo = SkyCompact::getSub(compact, mode);
-	uint16 offset   = SkyCompact::getSub(compact, mode + 2);
 
-	offset = scrapeScript(compact, scriptNo, offset);
-	SkyCompact::setSub(compact, mode + 2, offset);
+	_compact = _skyCompact->getCompactByIndexes(list, index);
+	uint16 size = _skyCompact->getCompactSize(list, index);
+	if (size == 0) return;
+
+	uint16 mode = _compact->mode; // get pointer to current script
+	uint16 scriptNo = SkyCompact::getSub(_compact, mode);
+	uint16 offset   = SkyCompact::getSub(_compact, mode + 2);
+
+	offset = scrapeScript(scriptNo, offset);
+	SkyCompact::setSub(_compact, mode + 2, offset);
 
 	if (!offset) // script finished
-		compact->mode -= 4;
-	else if (compact->mode == mode)
+		_compact->mode -= 4;
+	else if (_compact->mode == mode)
 		return;
 
 }
 
 void Logic::scrapeAssetsFromCompacts() {
 	uint16 numDataLists = _skyCompact->giveNumDataLists();
-	// for (uint16 i = 0; i < numDataLists; i++) {
-	// 	uint16 dataListLen = _skyCompact->giveDataListLen(i);
-	// 	for (uint16 j = 0; j < dataListLen; j++) {
-	// 		Compact* compact = _skyCompact->getCompactByIndexes(i, j);
-	// 		scrapeCompact(compact);
-	// 	}
-	// }
 	uint16 i = 1;
-	uint16 j = 4; // get mini_so compact to test with
-	scrapeCompact(_skyCompact->getCompactByIndexes(i, j));
+	// uint16 j = 4; // get mini_so compact to test with¨
+	// _compact = _skyCompact->getCompactByIndexes(i, j);
+	// scrapeCompact();
+
+	// for (uint16 i = 0; i < numDataLists; i++) {
+		uint16 dataListLen = _skyCompact->giveDataListLen(i);
+		for (uint16 j = 0; j < dataListLen; j++) {
+			scrapeCompact(i, j);
+		}
+	// }
 }
 
-uint16 Logic::scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset) {
+uint16 Logic::scrapeScript(uint16 scriptNo, uint16 offset) {
 	do {
 		bool restartScript = false;
 
@@ -270,15 +277,19 @@ uint16 Logic::scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset) {
 					uint16 mcode = *scriptData++ / 4; // get mcode number
 					// Debug::mcode(mcode, a, b, c);
 
-					Compact *saveCpt = compact;
+					Compact *saveCpt = _compact;
 					// bool ret = (this->*_mcodeTable[mcode]) (a, b, c);
 					// get value of key in map
 					
 					if(_mcodeMap.size() > mcode){
-						std::cout << _mcodeMap.at(mcode) << a << b << c << std::endl;
+						std::cout << _mcodeMap[mcode] << " " << a << " " << b << " " << c << std::endl;
+						if (mcode > 34 && mcode < 39){
+							writeText(b);
+						}
 					}
-					compact = saveCpt;
+					_compact = saveCpt;
 
+					// TODO: Fix infinite loop
 					bool ret = true;
 
 					if (!ret)
@@ -311,11 +322,11 @@ uint16 Logic::scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset) {
 					scriptData += *scriptData / 2; // use the default
 				break;
 			case 15: // push_offset
-				push( *(uint16 *)_skyCompact->getCompactElem(compact, *scriptData++) );
+				push( *(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) );
 				break;
 			case 16: // pop_offset
 				// pop a value into a compact
-				*(uint16 *)_skyCompact->getCompactElem(compact, *scriptData++) = (uint16)pop();
+				*(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) = (uint16)pop();
 				break;
 			case 17: // is_equal
 				a = pop();
@@ -347,6 +358,10 @@ uint16 Logic::scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset) {
 	} while (true);
 }
 
+void Logic::writeText(uint16 textNr) {
+	char* textBuffer = _skyText->getText(textNr);
+	std::cout << textBuffer << std::endl;
+}
 
 
 static uint16 clickTable[46] = {
@@ -419,7 +434,7 @@ uint32 Logic::pop() {
 }
 
 void Logic::setupMcodeMap() {
-	static const std::map<uint16, std::string> _mcodeMap = {
+	_mcodeMap = {
 		{0, "fnCacheChip"},
 		{1, "fnCacheFast"},
 		{2, "fnDrawScreen"},
@@ -462,7 +477,41 @@ void Logic::setupMcodeMap() {
 		{39, "fnChooser"},
 		{40, "fnHighlight"},
 		{41, "fnTextKill"},
-		{42, "fnStopMode"}
+		{42, "fnStopMode"},
+		{43, "fnWeWait"},
+		{44, "fnSendSync"},
+		{45, "fnSendFastSync"},
+		{46, "fnSendRequest"},
+		{47, "fnClearRequest"},
+		{48, "fnCheckRequest"},
+		{49, "fnStartMenu"},
+		{50, "fnUnhighlight"},
+		{51, "fnFaceId"},
+		{52, "fnForeground"},
+		{53, "fnBackground"},
+		{54, "fnNewBackground"},
+		{55, "fnSort"},
+		{56, "fnNoSpriteEngine"},
+		{57, "fnNoSpritesA6"},
+		{58, "fnResetId"},
+		{59, "fnToggleGrid"},
+		{60, "fnPause"},
+		{61, "fnRunAnimMod"},
+		{62, "fnSimpleMod"},
+		{63, "fnRunFrames"},
+		{64, "fnAwaitSync"},
+		{65, "fnIncMegaSet"},
+		{66, "fnDecMegaSet"},
+		{67, "fnSetMegaSet"},
+		{68, "fnMoveItems"},
+		{69, "fnNewList"},
+		{70, "fnAskThis"},
+		{71, "fnRandom"},
+		{72, "fnPersonHere"},
+		{73, "fnToggleMouse"},
+		{74, "fnMouseOn"},
+		{75, "fnMouseOff"}
+
 	};
 }
 

@@ -119,7 +119,7 @@ class Disk;
 // class MusicBase;
 // class Screen;
 // class Sound;
-// class Text;
+class Text;
 class SkyCompact;
 
 class Logic;
@@ -132,8 +132,8 @@ public:
 	Logic(
 		SkyCompact *skyCompact,
 		// Screen *skyScreen,
-		Disk *skyDisk);
-		// Text *skyText,
+		Disk *skyDisk,
+		Text *skyText);
 		// MusicBase *skyMusic,
 		// Mouse *skyMouse,
 		// Sound *skySound);
@@ -151,8 +151,9 @@ public:
 	void parseSaveData(uint32 *data);
 	// skyscraper functions
 	void scrapeAssetsFromCompacts();
-	void scrapeCompact(Compact *compact);
-	uint16 scrapeScript(Compact* compact, uint16 scriptNo, uint16 offset);
+	void scrapeCompact(uint16 list, uint16 index);
+	uint16 scrapeScript(uint16 scriptNo, uint16 offset);
+	void writeText(uint16 textNr);
 
 private:
 	void setupLogicTable();
@@ -160,7 +161,7 @@ private:
 	void setupMcodeMap();
 	const LogicTable *_logicTable;
 	const McodeTable *_mcodeTable;
-	const std::map<uint16, std::string> _mcodeMap;
+	std::map<uint16, std::string> _mcodeMap;
 
 protected:
 	void push(uint32);
@@ -325,7 +326,7 @@ protected:
 	SkyCompact	*_skyCompact;
 	// Screen		*_skyScreen;
 	Disk		*_skyDisk;
-	// Text		*_skyText;
+	Text		*_skyText;
 	// MusicBase	*_skyMusic;
 	// Sound		*_skySound;
 	// AutoRoute	*_skyAutoRoute;

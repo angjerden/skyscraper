@@ -15,6 +15,7 @@ int main(int argc, char **argv){
     Scraper* scraper = new Scraper(skyPath);
     // scraper->scrapeAssetsLogically();
     // scraper->scrapeAssetsHardcoded();
+    // scraper->writeDinnerTableToFile();
     // scraper->writeCompactsToFile();
     // scraper->scrapeMIDI();
     scraper->scrapeAssetsFromLogicScripts();

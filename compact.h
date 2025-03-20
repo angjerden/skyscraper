@@ -79,6 +79,7 @@ public:
 	uint32 readRandom(void *ptr, uint32 len);
 	void writeCompactsToFile();
 	Compact* getCompactByIndexes(uint16 list, uint16 index);
+	uint16 getCompactSize(uint16 list, uint16 index);
 private:
 	void checkAndFixOfficerBluntError();
 
