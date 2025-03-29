@@ -16,11 +16,13 @@ Scraper::~Scraper() {
     delete _skyText;
 }
 
-void Scraper::scrapeAssetsLogically() {
+void Scraper::scrapeAssetsByRunningTheWholeDamnEngine() {
     _skyLogic->initScreen0();
 
     // get texts and speeches
-    uint16* talkTable = (uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
+    // uint16* talkTable = (uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
+
+    _skyLogic->engine();
 }
 
 // get hardcoded assets from the intro and elsewhere
@@ -82,6 +84,6 @@ void Scraper::scrapeMIDI() {
     }
 }
 
-void Scraper::scrapeAssetsFromLogicScripts() {
+void Scraper::scrapeAssetsFromCompacts() {
     _skyLogic->scrapeAssetsFromCompacts();
 }

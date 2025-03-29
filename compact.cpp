@@ -229,19 +229,19 @@ SkyCompact::~SkyCompact() {
 }
 
 uint16 SkyCompact::readUint16LE() {
-  uint16 value;
-  std::fread(&value, 1, 2, _cptFile);
-  return value;
+	uint16 value;
+  	std::fread(&value, 1, 2, _cptFile);
+  	return value;
 }
 
 uint32 SkyCompact::readUint32LE() {
-  uint32 value;
-  std:fread(&value, 1, 4, _cptFile);
-  return value;
+  	uint32 value;
+  	std:fread(&value, 1, 4, _cptFile);
+  	return value;
 }
 
 uint32 SkyCompact::readRandom(void *ptr, uint32 len) {
-  return std::fread(ptr, 1, len, _cptFile);
+  	return std::fread(ptr, 1, len, _cptFile);
 }
 
 /* WORKAROUND for bug #2687:
@@ -322,6 +322,34 @@ void SkyCompact::setSub(Compact *cpt, uint16 mode, uint16 value) {
 	}
 }
 
+uint16 *SkyCompact::getGrafixPtr(Compact *cpt) {
+	uint16 *gfxBase = (uint16 *)fetchCpt(cpt->grafixProgId);
+	if (gfxBase == NULL)
+		return NULL;
+
+	return gfxBase + cpt->grafixProgPos;
+}
+
+/**
+ * Returns the n'th mega set specified by \a megaSet from Compact \a cpt.
+ */
+MegaSet *SkyCompact::getMegaSet(Compact *cpt) {
+	switch (cpt->megaSet) {
+	case 0:
+		return &cpt->megaSet0;
+	case NEXT_MEGA_SET:
+		return &cpt->megaSet1;
+	case NEXT_MEGA_SET*2:
+		return &cpt->megaSet2;
+	case NEXT_MEGA_SET*3:
+		return &cpt->megaSet3;
+	default:
+		// error("Invalid MegaSet (%d)", cpt->megaSet);
+		std::cout << "Invalid MegaSet (" << cpt->megaSet << ")" << std::endl;
+		return NULL;
+	}
+}
+
 void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 	if (off < COMPACT_SIZE)
 		return((uint8 *)cpt + compactOffsets[off]);
@@ -365,11 +393,10 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 }
 
 Compact* SkyCompact::fetchCpt(uint16 cptId) {
-
-  char* cptName = _cptNames[cptId >> 12][cptId & 0xFFF];
-  const char* typeName = nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]);
-  std::cout << "Loading Compact " << *cptName << " [" << *typeName << "] (" << cptId << "=" << (cptId >> 12) << "," << (cptId & 0xFFF) << ")" << std::endl;
-	return _compacts[cptId >> 12][cptId & 0xFFF];
+	char* cptName = _cptNames[cptId >> 12][cptId & 0xFFF];
+  	const char* typeName = nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]);
+  	std::cout << "Loading Compact " << cptName << " [" << typeName << "] (" << cptId << "=" << (cptId >> 12) << "," << (cptId & 0xFFF) << ")" << std::endl;
+  	return _compacts[cptId >> 12][cptId & 0xFFF];
 }
 
 uint16 SkyCompact::giveNumDataLists() {

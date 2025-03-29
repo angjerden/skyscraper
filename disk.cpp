@@ -184,6 +184,18 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 	return 0; //not found
 }
 
+void Disk::fnMiniLoad(uint16 fileNum) {
+	uint16 cnt = 0;
+	while (_loadedFilesList[cnt]) {
+		if (_loadedFilesList[cnt] == fileNum)
+			return;
+		cnt++;
+	}
+	_loadedFilesList[cnt] = fileNum & 0x7FFFU;
+	_loadedFilesList[cnt + 1] = 0;
+	_itemList[fileNum & 2047] = (void**)loadFile(fileNum);
+}
+
 void Disk::writeDinnerTableToFile() {
 	uint16 i;
 	uint8 *dnrTblPtr = (uint8 *)_dinnerTableArea;
