@@ -25,6 +25,7 @@ class Scraper {
         void writeDinnerTableToFile();
         void writeCompactsToFile();
         void scrapeMIDI();
+        void scrapeTextAndSpeech();
     protected:
         Disk* _skyDisk;
         SkyCompact* _skyCompact;

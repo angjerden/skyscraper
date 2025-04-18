@@ -393,6 +393,8 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 }
 
 Compact* SkyCompact::fetchCpt(uint16 cptId) {
+	if (cptId == 0)
+		cptId = 3; // default to Foster compact if we haven't got anything else to work with, let's see what heck that unleashes
 	char* cptName = _cptNames[cptId >> 12][cptId & 0xFFF];
   	const char* typeName = nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]);
   	std::cout << "Loading Compact " << cptName << " [" << typeName << "] (" << cptId << "=" << (cptId >> 12) << "," << (cptId & 0xFFF) << ")" << std::endl;

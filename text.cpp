@@ -182,6 +182,70 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
     }
 }
 
+// So far difficult to achieve without text numbers
+// how to pass by "empty" areas?
+void Text::scrapeTextForSection(uint32 sectionNo) {
+    uint32 language = SKY_ENGLISH;
+    uint32 fileNo = sectionNo + ((language * NO_OF_TEXT_SECTIONS) + 60600);
+    _skyDisk->_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo);
+    
+    uint32 textNrOrigin = (sectionNo << 12);
+    uint32 textNr = textNrOrigin;
+    
+    for (int i = 0; i < 533; i++) {
+        uint8 *textDataPtr = (uint8 *)_skyDisk->_itemList[FIRST_TEXT_SEC + sectionNo];
+        textNr += i;
+
+        uint32 offset = 0;
+        uint32 blockNr = textNr & 0xFE0;
+        uint32 textNr2 = textNr & 0x1F;
+    
+        if (blockNr) {
+            uint16 *blockPtr = (uint16 *)(textDataPtr + 4);
+            uint32 nr32MsgBlocks = blockNr >> 5;
+            
+            do {
+                offset += READ_UINT16(blockPtr);
+                blockPtr++;
+            } while (--nr32MsgBlocks);
+    
+        }
+    
+        if (textNr2) {
+            uint8 *blockPtr2 = textDataPtr + blockNr + READ_UINT16(textDataPtr);
+            do {
+                uint16 skipBytes = *blockPtr2++;
+                if (skipBytes & 0x80) {
+                    skipBytes &= 0x7F;
+                    skipBytes <<= 3;
+                }
+                offset += skipBytes;
+            } while (--textNr2);
+        }
+    
+        uint32 bitPos = offset & 3;
+        offset >>= 2;
+        offset += READ_UINT16(textDataPtr + 2);
+    
+        textDataPtr += offset;
+    
+        //bit pointer: 0->8, 1->6, 2->4 ...
+        bitPos ^= 3;
+        bitPos++;
+        bitPos <<= 1;
+    
+        char *dest = (char *)_textBuffer;
+        char textChar;
+    
+        do {
+            textChar = getTextChar(&textDataPtr, &bitPos);
+            *dest++ = textChar;
+        } while (textChar);
+        std::cout << _textBuffer << std::endl;
+    }
+
+}
+
 
 // DisplayedText Text::displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
 // 	//Render text into buffer *dest

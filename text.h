@@ -60,6 +60,9 @@ public:
 	uint32 _numLetters;	//no of chars in message
 	char* getText(uint32 textNr); //moved this from private
 
+	// skyscraper functions
+	void scrapeTextForSection(uint32 sectionNo);
+
 private:
 	void initHuffTree();
 	char getTextChar(uint8 **data, uint32 *bitPos);

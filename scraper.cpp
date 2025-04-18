@@ -87,3 +87,12 @@ void Scraper::scrapeMIDI() {
 void Scraper::scrapeAssetsFromCompacts() {
     _skyLogic->scrapeAssetsFromCompacts();
 }
+
+void Scraper::scrapeTextAndSpeech() {
+    // loop through each section, there are 7 sections
+    const int max_sections = 7;
+    for (int i = 0; i < 8; i++) {
+        _skyText->scrapeTextForSection(i);
+    }
+    // _skyText->scrapeTextForSection(1);
+}

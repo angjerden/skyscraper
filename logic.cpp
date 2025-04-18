@@ -161,40 +161,39 @@ void Logic::engine() {
 void Logic::scrapeAssetsFromCompacts() {
 	uint16 numDataLists = _skyCompact->giveNumDataLists();
 	uint16 i = 1;
-	// uint16 j = 4; // get mini_so compact to test with¨
-	// _compact = _skyCompact->getCompactByIndexes(i, j);
-	// scrapeCompact();
+	uint16 j = 4; // get mini_so compact to test with
+	scrapeCompact(i, j);
 	
 	// for (uint16 i = 0; i < numDataLists; i++) {
-		uint16 dataListLen = _skyCompact->giveDataListLen(i);
-		for (uint16 j = 0; j < dataListLen; j++) {
-			scrapeCompact(i, j);
-		}
+		// uint16 dataListLen = _skyCompact->giveDataListLen(i);
+		// for (uint16 j = 0; j < dataListLen; j++) {
+		// 	scrapeCompact(i, j);
+		// }
 		// }
 	}
 	
-	void Logic::scrapeCompact(uint16 list, uint16 index) {
-		/// Process the current mega's script
-		/// If the script finishes then drop back a level
+void Logic::scrapeCompact(uint16 list, uint16 index) {
+	/// Process the current mega's script
+	/// If the script finishes then drop back a level
+	
+	_compact = _skyCompact->getCompactByIndexes(list, index);
+	uint16 size = _skyCompact->getCompactSize(list, index);
+	if (size == 0) return;
+	
+	for (;;) {
+		uint16 mode = _compact->mode; // get pointer to current script
+		uint16 scriptNo = SkyCompact::getSub(_compact, mode);
+		uint16 offset   = SkyCompact::getSub(_compact, mode + 2);
 		
-		_compact = _skyCompact->getCompactByIndexes(list, index);
-		uint16 size = _skyCompact->getCompactSize(list, index);
-		if (size == 0) return;
+		offset = scrapeScript(scriptNo, offset);
+		SkyCompact::setSub(_compact, mode + 2, offset);
 		
-		for (;;) {
-			uint16 mode = _compact->mode; // get pointer to current script
-			uint16 scriptNo = SkyCompact::getSub(_compact, mode);
-			uint16 offset   = SkyCompact::getSub(_compact, mode + 2);
-			
-			offset = scrapeScript(scriptNo, offset);
-			SkyCompact::setSub(_compact, mode + 2, offset);
-			
-			if (!offset) // script finished
-				_compact->mode -= 4;
-			else if (_compact->mode == mode)
-				return;
-		}
+		if (!offset) // script finished
+			_compact->mode -= 4;
+		else if (_compact->mode == mode)
+			return;
 	}
+}
 	
 void Logic::nop() {}
 
@@ -212,7 +211,6 @@ void Logic::logicScript() {
 		uint16 scriptNo = SkyCompact::getSub(_compact, mode);
 		uint16 offset   = SkyCompact::getSub(_compact, mode + 2);
 
-		// offset = script(scriptNo, offset);
 		offset = script(scriptNo, offset);
 		SkyCompact::setSub(_compact, mode + 2, offset);
 

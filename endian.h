@@ -3,11 +3,10 @@
 
 #include "types.h"
 
-// TODO: Which of the two READ_LE_UINT16 is preferred?
-// inline uint16 READ_LE_UINT16(const void *ptr) {
-//     struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));
-//     return ((const Unaligned16 *)ptr)->val;
-// }
+inline uint16 READ_UINT16(const void *ptr) {
+    struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));
+    return ((const Unaligned16 *)ptr)->val;
+}
 
 inline uint16 READ_LE_UINT16(const void *ptr) {
     const uint8 *b = (const uint8 *)ptr;
