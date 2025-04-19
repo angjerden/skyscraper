@@ -194,7 +194,7 @@ void Text::scrapeTextForSection(uint32 sectionNo) {
     
     for (int i = 0; i < 533; i++) {
         uint8 *textDataPtr = (uint8 *)_skyDisk->_itemList[FIRST_TEXT_SEC + sectionNo];
-        textNr += i;
+        textNr = i;
 
         uint32 offset = 0;
         uint32 blockNr = textNr & 0xFE0;
