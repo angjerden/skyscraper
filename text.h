@@ -24,6 +24,8 @@
 
 // #include "sky/sky.h"
 #include "types.h"
+#include <fstream>
+#include <map>
 
 struct Compact;
 class Disk;
@@ -61,7 +63,7 @@ public:
 	char* getText(uint32 textNr); //moved this from private
 
 	// skyscraper functions
-	void scrapeTextForSection(uint32 sectionNo);
+	std::map<uint32, std::string> scrapeTextForSection(uint32 sectionNo, uint16 numTextsInSection);
 
 private:
 	void initHuffTree();

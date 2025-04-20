@@ -184,21 +184,21 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
 
 // So far difficult to achieve without text numbers
 // how to pass by "empty" areas?
-void Text::scrapeTextForSection(uint32 sectionNo) {
+std::map<uint32, std::string> Text::scrapeTextForSection(uint32 sectionNo, uint16 numTextsInSection) {
     uint32 language = SKY_ENGLISH;
     uint32 fileNo = sectionNo + ((language * NO_OF_TEXT_SECTIONS) + 60600);
     _skyDisk->_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo);
     
+    std::map<uint32, std::string> textMap;
     uint32 textNrOrigin = (sectionNo << 12);
-    uint32 textNr = textNrOrigin;
     
-    for (int i = 0; i < 533; i++) {
+    for (int i = 0; i <= numTextsInSection; i++) {
         uint8 *textDataPtr = (uint8 *)_skyDisk->_itemList[FIRST_TEXT_SEC + sectionNo];
-        textNr = i;
+        uint32 textNr = textNrOrigin + i;
 
         uint32 offset = 0;
         uint32 blockNr = textNr & 0xFE0;
-        uint32 textNr2 = textNr & 0x1F;
+        uint32 textNrInBlock = textNr & 0x1F;
     
         if (blockNr) {
             uint16 *blockPtr = (uint16 *)(textDataPtr + 4);
@@ -211,7 +211,7 @@ void Text::scrapeTextForSection(uint32 sectionNo) {
     
         }
     
-        if (textNr2) {
+        if (textNrInBlock) {
             uint8 *blockPtr2 = textDataPtr + blockNr + READ_UINT16(textDataPtr);
             do {
                 uint16 skipBytes = *blockPtr2++;
@@ -220,7 +220,7 @@ void Text::scrapeTextForSection(uint32 sectionNo) {
                     skipBytes <<= 3;
                 }
                 offset += skipBytes;
-            } while (--textNr2);
+            } while (--textNrInBlock);
         }
     
         uint32 bitPos = offset & 3;
@@ -241,9 +241,10 @@ void Text::scrapeTextForSection(uint32 sectionNo) {
             textChar = getTextChar(&textDataPtr, &bitPos);
             *dest++ = textChar;
         } while (textChar);
-        std::cout << _textBuffer << std::endl;
+        std::cout << sectionNo << " " << i << " " << textNr << " " << _textBuffer << std::endl;
+        textMap.insert({textNr, std::string(_textBuffer)});
     }
-
+    return textMap;
 }
 
 

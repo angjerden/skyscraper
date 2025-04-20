@@ -89,10 +89,28 @@ void Scraper::scrapeAssetsFromCompacts() {
 }
 
 void Scraper::scrapeTextAndSpeech() {
-    // loop through each section, there are 7 sections
-    const int max_sections = 7;
-    for (int i = 0; i < 8; i++) {
-        _skyText->scrapeTextForSection(i);
+    // loop through each section, there are 8 sections
+    const uint16 max_sections = 8;
+    std::map<uint16, uint16> section_texts {
+        {0, 564}, // done
+        {1, 483}, // done
+        {2, 1303},// done
+        {3, 922}, // done
+        {4, 1140},// done
+        {5, 531}, // done 
+        {6, 120}, // done
+        {7, 96}   // done
+    };
+
+    std::ofstream outfile;
+    outfile.open("texts.txt");
+
+    for (int i = 0; i < max_sections; i++) {
+        std::map<uint32, std::string> textMap = _skyText->scrapeTextForSection(i, section_texts[i]);
+        for (std::map<uint32, std::string>::iterator it = textMap.begin(); it != textMap.end(); it++) {
+            outfile << it->first << " " << it->second << std::endl;
+        }
     }
     // _skyText->scrapeTextForSection(1);
+    outfile.close();
 }

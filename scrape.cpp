@@ -10,7 +10,7 @@ int main(int argc, char **argv){
       skyPath = argv[1];
     }
 
-    std::cout << __cplusplus << std::endl;
+    std::cout << "C++ version: " << __cplusplus << std::endl;
 
     Scraper* scraper = new Scraper(skyPath);
     // scraper->scrapeAssetsByRunningTheWholeDamnEngine();
