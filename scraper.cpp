@@ -6,6 +6,7 @@ Scraper::Scraper(char* skyPath) {
     _skyCompact = new SkyCompact(skyPath);
     _skyText = new Text(_skyDisk, _skyCompact);
     _skyLogic = new Logic(_skyCompact, _skyDisk, _skyText);
+    _skySound = new Sound(_skyDisk);
 
 }
 
@@ -90,27 +91,33 @@ void Scraper::scrapeAssetsFromCompacts() {
 
 void Scraper::scrapeTextAndSpeech() {
     // loop through each section, there are 8 sections
-    const uint16 max_sections = 8;
-    std::map<uint16, uint16> section_texts {
-        {0, 564}, // done
-        {1, 483}, // done
-        {2, 1303},// done
-        {3, 922}, // done
-        {4, 1140},// done
-        {5, 531}, // done 
-        {6, 120}, // done
-        {7, 96}   // done
+    std::map<uint16, uint16> numTextsPerSection {
+        {0, 564}, 
+        {1, 483}, 
+        {2, 1303},
+        {3, 922}, 
+        {4, 1140},
+        {5, 531},  
+        {6, 120}, 
+        {7, 96}   
     };
+
+    numTextsPerSection = {
+        {0, 20}};
 
     std::ofstream outfile;
     outfile.open("texts.txt");
 
-    for (int i = 0; i < max_sections; i++) {
-        std::map<uint32, std::string> textMap = _skyText->scrapeTextForSection(i, section_texts[i]);
-        for (std::map<uint32, std::string>::iterator it = textMap.begin(); it != textMap.end(); it++) {
-            outfile << it->first << " " << it->second << std::endl;
+    for (const auto& [sectionNo, numTexts] : numTextsPerSection) {
+        std::map<uint32, std::string> textMap = _skyText->scrapeTextForSection(sectionNo, numTexts);
+        for (const auto& [textNr, text] : textMap) {
+            outfile << textNr << " " << text << std::endl;
+
+            uint8* speechData = _skySound->getSpeech(textNr);
+            if (speechData != NULL) {
+                Writer::writeWav("speech//" + std::to_string(textNr) + ".wav", speechData);
+            }
         }
     }
-    // _skyText->scrapeTextForSection(1);
     outfile.close();
 }

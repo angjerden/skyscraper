@@ -60,7 +60,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 
 	uint8 *fileInfoPtr = getFileInfo(fileNr);
 	if (fileInfoPtr == NULL) {
-		std::cout << "File " << fileNr << "not found" << std::endl;
+		std::cout << "File " << fileNr << " not found" << std::endl;
 		return NULL;
 	}
 

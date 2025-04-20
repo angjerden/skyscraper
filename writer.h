@@ -30,7 +30,7 @@ struct DIBHeader {
 #pragma pack(pop)
 
 namespace Writer {
-    void writeWav(std::string fileName, uint32 fileSize, uint8* speechData);
+    void writeWav(std::string fileName, uint8* speechData);
     void writeBMP(const char* filename, uint8* image, uint8* palette);
     // void writeImage(std::string fileName, uint8* img, uint8* palette);
 };

@@ -182,8 +182,6 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
     }
 }
 
-// So far difficult to achieve without text numbers
-// how to pass by "empty" areas?
 std::map<uint32, std::string> Text::scrapeTextForSection(uint32 sectionNo, uint16 numTextsInSection) {
     uint32 language = SKY_ENGLISH;
     uint32 fileNo = sectionNo + ((language * NO_OF_TEXT_SECTIONS) + 60600);
