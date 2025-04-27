@@ -33,4 +33,6 @@ inline uint32 READ_BE_UINT32(const void *ptr) {
     return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | (b[3]);
 }
 
+#define FROM_LE_16(a) ((uint16)(a))
+
 #endif

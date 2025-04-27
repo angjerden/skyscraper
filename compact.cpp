@@ -1,4 +1,4 @@
-#include "assert.h"
+#include <cassert>
 #include "compact.h"
 #include <stdio.h>
 #include <iostream>
@@ -180,10 +180,10 @@ SkyCompact::SkyCompact(char* skyPath) {
     for (cnt = 0; cnt < numDlincs; cnt++) {
       uint16 dlincId = READ_LE_UINT16(dlincPos++);
       uint16 destId = READ_LE_UINT16(dlincPos++);
-      // assert(((dlincId >> 12) < _numDataLists) && ((dlincId & 0xFFF) < _dataListLen[dlincId >> 12]) && (_compacts[dlincId >> 12][dlincId & 0xFFF] == NULL));
+      assert(((dlincId >> 12) < _numDataLists) && ((dlincId & 0xFFF) < _dataListLen[dlincId >> 12]) && (_compacts[dlincId >> 12][dlincId & 0xFFF] == NULL));
       _compacts[dlincId >> 12][dlincId & 0xFFF] = _compacts[destId >> 12][destId & 0xFFF];
 
-      // assert(_cptNames[dlincId >> 12][dlincId & 0xFFF] == NULL);
+      assert(_cptNames[dlincId >> 12][dlincId & 0xFFF] == NULL);
       _cptNames[dlincId >> 12][dlincId & 0xFFF] = asciiPos;
       asciiPos += strlen(asciiPos) + 1;
     }

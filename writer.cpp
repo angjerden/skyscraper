@@ -34,7 +34,7 @@ namespace Writer {
             std::cout << "Failed to open " << fileName << std::endl;
         } else {
             outfile.write(reinterpret_cast<char*>(&header), sizeof(WavHeader));
-            outfile.write(reinterpret_cast<char*>(speechData), audioSize);
+            outfile.write(reinterpret_cast<char*>(audioData), audioSize);
         }
         outfile.close();
         std::cout << "Wrote wav file " << fileName << std::endl;

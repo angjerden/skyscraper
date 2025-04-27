@@ -58,7 +58,7 @@ void Scraper::scrapeMIDI() {
     uint8 section = 1;
     uint8 currentMusic = 2; // song
 
-    // load music data for section
+    // musicbase.loadSection() - load music data for section
     uint8* _musicData = _skyDisk->loadFile(driverFileBase + FILES_PER_SECTION * section);
     uint32 fileSize = _skyDisk->_lastLoadedFileSize;
     std::ofstream outfile("midifile.mid", std::ios::binary);
@@ -74,7 +74,7 @@ void Scraper::scrapeMIDI() {
     musicPos += _musicDataLoc + ((currentMusic - 1) << 1);
     musicPos = READ_LE_UINT16(_musicData + musicPos) + _musicDataLoc;
 
-    // before adlibmusic.setupChannels()
+    // in function call to adlibmusic.setupChannels()
     uint8* channelData = _musicData + musicPos + 2;
 
     // adlibmusic.setupChannels()
@@ -82,6 +82,7 @@ void Scraper::scrapeMIDI() {
     channelData++;
     for (int i = 0; i < numberOfChannels; i++) {
         uint16 channelDataStart = READ_LE_UINT16((uint16*)channelData + i) + _musicDataLoc;
+        // _channels
     }
 }
 
@@ -101,9 +102,6 @@ void Scraper::scrapeTextAndSpeech() {
         {6, 120}, 
         {7, 96}   
     };
-
-    numTextsPerSection = {
-        {0, 20}};
 
     std::ofstream outfile;
     outfile.open("texts.txt");

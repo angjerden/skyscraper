@@ -19,7 +19,7 @@
  *
  */
 
-#include "assert.h"
+ #include <cassert>
 #include "compact.h"
 #include "disk.h"
 #include "endian.h"
@@ -870,7 +870,7 @@ uint16 Logic::scrapeScript(uint16 scriptNo, uint16 offset) {
 			case 11: // call_mcode
 				{
 					a = *scriptData++;
-					// assert(a <= 3);
+					assert(a <= 3);
 					// No, I did not forget the "break"s
 					switch (a) {
 					case 3:
