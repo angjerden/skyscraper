@@ -26,6 +26,7 @@
 #include "types.h"
 #include <fstream>
 #include <map>
+#include <unordered_set>
 
 struct Compact;
 class Disk;

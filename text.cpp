@@ -182,6 +182,8 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
     }
 }
 
+static const std::unordered_set<uint32> _excludedTexts = {0, 100, 101, 114, 121, 135, 136, 140};
+
 std::map<uint32, std::string> Text::scrapeTextForSection(uint32 sectionNo, uint16 numTextsInSection) {
     uint32 language = SKY_ENGLISH;
     uint32 fileNo = sectionNo + ((language * NO_OF_TEXT_SECTIONS) + 60600);
@@ -193,6 +195,10 @@ std::map<uint32, std::string> Text::scrapeTextForSection(uint32 sectionNo, uint1
     for (int i = 0; i <= numTextsInSection; i++) {
         uint8 *textDataPtr = (uint8 *)_skyDisk->_itemList[FIRST_TEXT_SEC + sectionNo];
         uint32 textNr = textNrOrigin + i;
+
+        if (auto found = _excludedTexts.find(textNr); found != _excludedTexts.end()) {
+            continue;
+        }
 
         uint32 offset = 0;
         uint32 blockNr = textNr & 0xFE0;
@@ -239,12 +245,16 @@ std::map<uint32, std::string> Text::scrapeTextForSection(uint32 sectionNo, uint1
             textChar = getTextChar(&textDataPtr, &bitPos);
             *dest++ = textChar;
         } while (textChar);
+
+        std::string textStr = std::string(_textBuffer);
+        if (textStr == "?") { // Skipping empty text which results in a question mark
+            continue;
+        }
         std::cout << sectionNo << " " << i << " " << textNr << " " << _textBuffer << std::endl;
-        textMap.insert({textNr, std::string(_textBuffer)});
+        textMap.insert({textNr, textStr});
     }
     return textMap;
 }
-
 
 // DisplayedText Text::displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
 // 	//Render text into buffer *dest

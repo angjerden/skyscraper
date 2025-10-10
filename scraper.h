@@ -20,8 +20,8 @@ class Scraper {
     public:
         Scraper(char* skyPath);
         ~Scraper();
-        void scrapeAssetsByRunningTheWholeDamnEngine();
-        void scrapeAssetsFromCompacts();
+        void scrapeAssetsByRunningTheWholeDamnEngine(); // probably not doable
+        void scrapeAssetsFromCompacts(); // probably not doable
         void scrapeAssetsHardcoded();
         void writeDinnerTableToFile();
         void writeCompactsToFile();
