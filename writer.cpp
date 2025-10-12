@@ -58,11 +58,16 @@ namespace Writer {
         file.write(reinterpret_cast<const char*>(&bmpHeader), sizeof(bmpHeader));
         file.write(reinterpret_cast<const char*>(&dibHeader), sizeof(dibHeader));
 
+        uint8 fullyFadedUp = 32;
+        byte tmpPal[VGA_COLORS * 3];
+
+        convertPalette(palette, tmpPal);
+        
         // Write palette (VGA uses RGB but BMP expects RGBA)
-        for (int i = 0; i < 256; i++) {
-            file.put(palette[i * 3 + 2]); // Blue
-            file.put(palette[i * 3 + 1]); // Green
-            file.put(palette[i * 3 + 0]); // Red
+        for (int i = 0; i < VGA_COLORS; i++) {
+            file.put((tmpPal[i * 3 + 2] * fullyFadedUp) >> 5); // Blue
+            file.put((tmpPal[i * 3 + 1] * fullyFadedUp) >> 5); // Green
+            file.put((tmpPal[i * 3 + 0] * fullyFadedUp) >> 5); // Red
             file.put(0);                  // Reserved (0)
         }
 
@@ -74,5 +79,15 @@ namespace Writer {
         file.close();
         std::cout << "BMP file saved: " << filename << std::endl;
     }
+
+    void convertPalette(uint8 *inPal, uint8* outPal) {
+        int i;
+
+        for (i = 0; i < VGA_COLORS; i++) {
+            outPal[3 * i + 0] = (inPal[3 * i + 0] << 2) + (inPal[3 * i + 0] >> 4);
+            outPal[3 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
+            outPal[3 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
+        }
+}
 
 }

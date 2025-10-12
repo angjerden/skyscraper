@@ -13,11 +13,11 @@ int main(int argc, char **argv){
     std::cout << "C++ version: " << __cplusplus << std::endl;
 
     Scraper* scraper = new Scraper(skyPath);
-    // scraper->scrapeAssetsHardcoded();
+    scraper->scrapeAssetsHardcoded();
     // scraper->writeDinnerTableToFile();
     // scraper->writeCompactsToFile();
     // scraper->scrapeMIDI();
-    scraper->scrapeTextAndSpeech();
+    // scraper->scrapeTextAndSpeech();
 
     // Loop through each entry in sky.dsk
     // Store entry in some data structure
