@@ -2,6 +2,7 @@
 #include "compact.h"
 #include "disk.h"
 #include "logic.h"
+#include "screen.h"
 #include "sound.h"
 #include "text.h"
 #include "writer.h"
@@ -15,6 +16,7 @@ class SkyCompact;
 class Logic;
 class Text;
 class Sound;
+class Screen;
 
 class Scraper {
     public:
@@ -33,6 +35,7 @@ class Scraper {
         Logic* _skyLogic;
         Text* _skyText;
         Sound* _skySound;
+        Screen* _skyScreen;
 };
 
 #endif

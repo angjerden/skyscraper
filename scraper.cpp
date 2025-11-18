@@ -7,6 +7,7 @@ Scraper::Scraper(char* skyPath) {
     _skyText = new Text(_skyDisk, _skyCompact);
     _skyLogic = new Logic(_skyCompact, _skyDisk, _skyText);
     _skySound = new Sound(_skyDisk);
+    _skyScreen = new Screen(_skyDisk, _skyCompact);
 
 }
 
@@ -31,28 +32,28 @@ void Scraper::scrapeAssetsHardcoded() {
     uint8* virginPal = _skyDisk->loadFile(60111);
     uint8* virginScr = _skyDisk->loadFile(60110);
 
-    Writer::writeBMP("virgin.bmp", virginScr, virginPal);
+    _skyScreen->writeBMP("virgin.bmp", virginScr, virginPal);
 
     uint8* shamanPal = _skyDisk->loadFile(59501);
     // uint8* shamanScr = _skyDisk->loadFile(59502);
 
-    // Writer::writeBMP("shaman.bmp", shamanScr, shamanPal);
+    // _skyScreen->writeBMP("shaman.bmp", shamanScr, shamanPal);
     // linc mouse cursors
     uint8* lincCursors = _skyDisk->loadFile(60302);
 
     uint8* file49 = _skyDisk->loadFile(49);
-    Writer::writeBMP("file49.bmp", file49, shamanPal);
+    _skyScreen->writeBMP("file49.bmp", file49, shamanPal);
 
     uint8* startRoom = _skyDisk->loadFile(64);
     uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
-    Writer::writeBMP("file64.bmp", startRoom, startRoomPal);
+    _skyScreen->writeBMP("file64.bmp", startRoom, startRoomPal);
 
     uint8* securityTerrace = _skyDisk->loadFile(92);
     uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
-    Writer::writeBMP("file92.bmp", securityTerrace, securityTerracePal);
+    _skyScreen->writeBMP("file92.bmp", securityTerrace, securityTerracePal);
 
     uint8* sprite89 = _skyDisk->loadFile(89);
-    Writer::writeBMP("sprite89.bmp", sprite89, shamanPal);
+    _skyScreen->writeBMP("sprite89.bmp", sprite89, shamanPal);
 }
 
 void Scraper::writeDinnerTableToFile() {
