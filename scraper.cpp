@@ -34,9 +34,9 @@ void Scraper::scrapeAssetsHardcoded() {
     Writer::writeBMP("virgin.bmp", virginScr, virginPal);
 
     uint8* shamanPal = _skyDisk->loadFile(59501);
-    // uint8* shamanScr = _skyDisk->loadFile(59502);
+    uint8* shamanScr = _skyDisk->loadFile(59502);
 
-    // Writer::writeBMP("shaman.bmp", shamanScr, shamanPal);
+    Writer::writeBMP("shaman.bmp", shamanScr, shamanPal);
     // linc mouse cursors
     uint8* lincCursors = _skyDisk->loadFile(60302);
 
