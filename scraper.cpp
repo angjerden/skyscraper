@@ -44,7 +44,9 @@ void Scraper::scrapeAssetsHardcoded() {
     uint8* file49 = _skyDisk->loadFile(49);
     _skyScreen->writeBMP("file49.bmp", file49, shamanPal);
 
-    uint8* startRoom = _skyDisk->loadFile(64);
+    uint16 startRoomNum = 64;
+    uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
+    uint8* startRoom = _skyDisk->loadFile(startRoomNum);
     uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
     _skyScreen->writeBMP("file64.bmp", startRoom, startRoomPal);
 

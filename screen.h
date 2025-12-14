@@ -95,6 +95,7 @@ public:
 
 	// skyscraper
 	void writeBMP(const char* filename, uint8* image, uint8* palette);
+	uint8* recreateImage(uint16 fileNr);
 
 private:
 	// OSystem *_system;

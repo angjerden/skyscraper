@@ -241,3 +241,38 @@ void Screen::writeBMP(const char* filename, uint8* image, uint8* palette) {
     //         outPal[3 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
     //         outPal[3 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
     //     }
+
+
+uint8* Screen::recreateImage(uint16 fileNr){
+	uint8* currentScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+	uint8* gameGrid;
+	memset(_gameGrid, 0x80, GRID_X * GRID_Y);
+
+	uint8* screenData = _skyDisk->loadFile(fileNr);
+
+	uint8* gridPos = gameGrid;
+	uint8* screenPos = currentScreen; // TODO: What is this???
+
+	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
+		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
+			if (gridPos[0] & 0x80) {
+				gridPos[0] &= 0x7F; // reset recreate flag
+				gridPos[0] |= 1;    // set bit for flip routine
+				uint8 *savedScreenY = screenPos;
+				for (uint8 gridCntY = 0; gridCntY < GRID_H; gridCntY++) {
+					memcpy(screenPos, screenData, GRID_W);
+					screenPos += GAME_SCREEN_WIDTH;
+					screenData += GRID_W;
+				}
+				screenPos = savedScreenY + GRID_W;
+			} else {
+				screenPos += GRID_W;
+				screenData += GRID_W * GRID_H;
+			}
+			gridPos++;
+		}
+		screenPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
+	}
+
+	return currentScreen;
+}
