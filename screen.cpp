@@ -177,20 +177,20 @@ void Screen::flip(bool doUpdate) {
 
 void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
 	// set up the new screen
-	fnFadeDown(scroll);
+	// fnFadeDown(scroll);
 	forceRefresh();
 	recreate();
-	spriteEngine();
+	// spriteEngine();
 	flip(false);
-	fnFadeUp(palette, scroll);
+	// fnFadeUp(palette, scroll);
 }
 
 //- sprites.asm routines
 
 void Screen::spriteEngine() {
-	doSprites(BACK);
-	sortSprites();
-	doSprites(FORE);
+	// doSprites(BACK);
+	// sortSprites();
+	// doSprites(FORE);
 }
 
 // Function to save 320x200 VGA image with a 256-color palette
