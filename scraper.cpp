@@ -36,8 +36,8 @@ void Scraper::scrapeAssetsHardcoded() {
 
     uint8* shamanPal = _skyDisk->loadFile(59501);
     // uint8* shamanScr = _skyDisk->loadFile(59502);
-
     // _skyScreen->writeBMP("shaman.bmp", shamanScr, shamanPal);
+ 
     // linc mouse cursors
     uint8* lincCursors = _skyDisk->loadFile(60302);
 
@@ -48,11 +48,12 @@ void Scraper::scrapeAssetsHardcoded() {
     uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
     uint8* startRoom = _skyDisk->loadFile(startRoomNum);
     uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
-    _skyScreen->writeBMP("file64.bmp", startRoom, startRoomPal);
+    // _skyScreen->writeBMP("file64recreated.bmp", startRoomR, startRoomPal);
 
+    uint8* securityTerraceR = _skyScreen->recreateImage(92);
     uint8* securityTerrace = _skyDisk->loadFile(92);
     uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
-    _skyScreen->writeBMP("file92.bmp", securityTerrace, securityTerracePal);
+    // _skyScreen->writeBMP("file92recreated.bmp", securityTerrace, securityTerracePal);
 
     uint8* sprite89 = _skyDisk->loadFile(89);
     _skyScreen->writeBMP("sprite89.bmp", sprite89, shamanPal);

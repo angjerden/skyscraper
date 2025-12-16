@@ -246,7 +246,7 @@ void Screen::writeBMP(const char* filename, uint8* image, uint8* palette) {
 uint8* Screen::recreateImage(uint16 fileNr){
 	uint8* currentScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	uint8* gameGrid;
-	memset(_gameGrid, 0x80, GRID_X * GRID_Y);
+	memset(gameGrid, 0x80, GRID_X * GRID_Y);
 
 	uint8* screenData = _skyDisk->loadFile(fileNr);
 
