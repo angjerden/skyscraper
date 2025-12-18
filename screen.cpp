@@ -194,6 +194,7 @@ void Screen::spriteEngine() {
 }
 
 // Function to save 320x200 VGA image with a 256-color palette
+// TODO: make support for other sizes, e.g. sprites of various sizes
 void Screen::writeBMP(const char* filename, uint8* image, uint8* palette) {
 	BMPHeader bmpHeader;
 	DIBHeader dibHeader;

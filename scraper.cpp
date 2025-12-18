@@ -45,18 +45,44 @@ void Scraper::scrapeAssetsHardcoded() {
     _skyScreen->writeBMP("file49.bmp", file49, shamanPal);
 
     uint16 startRoomNum = 64;
-    uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
+    // uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
     uint8* startRoom = _skyDisk->loadFile(startRoomNum);
     uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
     // _skyScreen->writeBMP("file64recreated.bmp", startRoomR, startRoomPal);
 
-    uint8* securityTerraceR = _skyScreen->recreateImage(92);
-    uint8* securityTerrace = _skyDisk->loadFile(92);
+    // uint16 roomNum = 65;
+    // uint8* roomR = _skyScreen->recreateImage(roomNum);
+    // uint8* room = _skyDisk->loadFile(roomNum);
+    // _skyScreen->writeBMP("file65.bmp", room, startRoomPal);
+    // _skyScreen->writeBMP("file65recreated.bmp", roomR, startRoomPal);
+
+    uint16 securityTerraceNum = 92;
+    uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
+    uint8* securityTerrace = _skyDisk->loadFile(securityTerraceNum);
     uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
-    // _skyScreen->writeBMP("file92recreated.bmp", securityTerrace, securityTerracePal);
+    _skyScreen->writeBMP("file92recreated.bmp", securityTerraceR, securityTerracePal);
+
+    uint16 transporterRoomNum = 112;
+    uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
+    uint8* transporterRoom = _skyDisk->loadFile(transporterRoomNum);
+    uint8* transporterPal = (uint8*)_skyCompact->fetchCpt(4318);
+    _skyScreen->writeBMP("file112.bmp", transporterRoom, transporterPal);
+    _skyScreen->writeBMP("file112recreated.bmp", transporterRoomR, transporterPal);
+
+
+    
+
+    // uint16 someRoom2Num = 131;
+    // uint8* someRoom2R = _skyScreen->recreateImage(someRoom2Num);
+    // uint8* someRoom2 = _skyDisk->loadFile(someRoom2Num);
+    // _skyScreen->writeBMP("file131.bmp", someRoom2, startRoomPal);
+    // _skyScreen->writeBMP("file131recreated.bmp", someRoom2R, startRoomPal);
 
     uint8* sprite89 = _skyDisk->loadFile(89);
     _skyScreen->writeBMP("sprite89.bmp", sprite89, shamanPal);
+
+    uint8* sprite91 = _skyDisk->loadFile(91);
+    _skyScreen->writeBMP("sprite91.bmp", sprite91, shamanPal);
 }
 
 void Scraper::writeDinnerTableToFile() {
