@@ -42,32 +42,27 @@ void Scraper::scrapeAssetsHardcoded() {
     uint8* lincCursors = _skyDisk->loadFile(60302);
 
     uint8* file49 = _skyDisk->loadFile(49);
-    _skyScreen->writeBMP("file49.bmp", file49, shamanPal);
+    _skyScreen->writeBMP("49.bmp", file49, shamanPal);
 
     uint16 startRoomNum = 64;
     // uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
     uint8* startRoom = _skyDisk->loadFile(startRoomNum);
     uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
-    // _skyScreen->writeBMP("file64recreated.bmp", startRoomR, startRoomPal);
-
-    // uint16 roomNum = 65;
-    // uint8* roomR = _skyScreen->recreateImage(roomNum);
-    // uint8* room = _skyDisk->loadFile(roomNum);
-    // _skyScreen->writeBMP("file65.bmp", room, startRoomPal);
-    // _skyScreen->writeBMP("file65recreated.bmp", roomR, startRoomPal);
+    // _skyScreen->writeBMP("64r.bmp", startRoomR, startRoomPal);
 
     uint16 securityTerraceNum = 92;
-    uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
+    // uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
     uint8* securityTerrace = _skyDisk->loadFile(securityTerraceNum);
     uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
-    _skyScreen->writeBMP("file92recreated.bmp", securityTerraceR, securityTerracePal);
+    // _skyScreen->writeBMP("92r.bmp", securityTerraceR, securityTerracePal);
+    // _skyScreen->writeBMP(securityTerraceNum + "r.bmp", securityTerraceR, securityTerracePal);
 
     uint16 transporterRoomNum = 112;
-    uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
+    // uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
     uint8* transporterRoom = _skyDisk->loadFile(transporterRoomNum);
     uint8* transporterPal = (uint8*)_skyCompact->fetchCpt(4318);
-    _skyScreen->writeBMP("file112.bmp", transporterRoom, transporterPal);
-    _skyScreen->writeBMP("file112recreated.bmp", transporterRoomR, transporterPal);
+    _skyScreen->writeBMP("112.bmp", transporterRoom, transporterPal);
+    // _skyScreen->writeBMP("112r.bmp", transporterRoomR, transporterPal);
 
 
     
@@ -79,7 +74,7 @@ void Scraper::scrapeAssetsHardcoded() {
     // _skyScreen->writeBMP("file131recreated.bmp", someRoom2R, startRoomPal);
 
     uint8* sprite89 = _skyDisk->loadFile(89);
-    _skyScreen->writeBMP("sprite89.bmp", sprite89, shamanPal);
+    _skyScreen->writeBMP("sprite89.bmp", sprite89, shamanPal, 10, 58);
 
     uint8* sprite91 = _skyDisk->loadFile(91);
     _skyScreen->writeBMP("sprite91.bmp", sprite91, shamanPal);

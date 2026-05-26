@@ -94,7 +94,7 @@ public:
 	void showGrid(uint8 *gridBuf);
 
 	// skyscraper
-	void writeBMP(const char* filename, uint8* image, uint8* palette);
+	void writeBMP(const char* filename, uint8* image, uint8* palette, uint16 width = 320, uint16 height = 200);
 	uint8* recreateImage(uint16 fileNr);
 
 private:

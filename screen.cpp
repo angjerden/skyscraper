@@ -194,15 +194,18 @@ void Screen::spriteEngine() {
 }
 
 // Function to save 320x200 VGA image with a 256-color palette
-// TODO: make support for other sizes, e.g. sprites of various sizes
-void Screen::writeBMP(const char* filename, uint8* image, uint8* palette) {
+void Screen::writeBMP(const char* filename, uint8* image, uint8* palette, uint16 width, uint16 height) {
 	BMPHeader bmpHeader;
 	DIBHeader dibHeader;
 	
 	bmpHeader.bfOffBits = sizeof(BMPHeader) + sizeof(DIBHeader) + 256 * 4;
 	bmpHeader.bfSize = bmpHeader.bfOffBits + dibHeader.biSizeImage;
 
-	std::ofstream file(filename, std::ios::binary);
+	// prepend folder to filename
+	std::string imagePath = "img//";
+	std::string filenamePath = imagePath + filename;
+
+	std::ofstream file(filenamePath, std::ios::binary);
 	if (!file) {
 		std::cerr << "Error: Unable to open file for writing!" << std::endl;
 		return;
@@ -226,22 +229,14 @@ void Screen::writeBMP(const char* filename, uint8* image, uint8* palette) {
 	}
 
 	// Write pixel data (BMP stores rows bottom-up, so we flip it)
-	for (int y = 199; y >= 0; y--) {
-		file.write(reinterpret_cast<const char*>(image + y * 320), 320);
+	for (int y = (height - 1); y >= 0; y--) {
+		file.write(reinterpret_cast<const char*>(image + y * width), width);
 	}
 
 	file.close();
 	std::cout << "BMP file saved: " << filename << std::endl;
 }
 
-    // void convertPalette(uint8 *inPal, uint8* outPal) {
-    //     int i;
-
-    //     for (i = 0; i < VGA_COLORS; i++) {
-    //         outPal[3 * i + 0] = (inPal[3 * i + 0] << 2) + (inPal[3 * i + 0] >> 4);
-    //         outPal[3 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
-    //         outPal[3 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
-    //     }
 
 
 uint8* Screen::recreateImage(uint16 fileNr){
@@ -252,7 +247,7 @@ uint8* Screen::recreateImage(uint16 fileNr){
 	uint8* screenData = _skyDisk->loadFile(fileNr);
 
 	uint8* gridPos = gameGrid;
-	uint8* screenPos = currentScreen; // TODO: What is this???
+	uint8* screenPos = currentScreen;
 
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
 		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
