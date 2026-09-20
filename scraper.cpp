@@ -28,6 +28,7 @@ void Scraper::scrapeAssetsByRunningTheWholeDamnEngine() {
 }
 
 // get hardcoded assets from the intro and elsewhere
+// Some of these cause segmentation faults down the line, commented out until fixed
 void Scraper::scrapeAssetsHardcoded() {
     uint8* virginPal = _skyDisk->loadFile(60111);
     uint8* virginScr = _skyDisk->loadFile(60110);
@@ -50,19 +51,19 @@ void Scraper::scrapeAssetsHardcoded() {
     uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
     _skyScreen->writeBMP("64r.bmp", startRoomR, startRoomPal);
 
-    uint16 securityTerraceNum = 92;
-    uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
-    uint8* securityTerrace = _skyDisk->loadFile(securityTerraceNum);
-    uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
+    // uint16 securityTerraceNum = 92;
+    // uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
+    // uint8* securityTerrace = _skyDisk->loadFile(securityTerraceNum);
+    // uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
     // _skyScreen->writeBMP("92r.bmp", securityTerraceR, securityTerracePal);
-    _skyScreen->writeBMP(securityTerraceNum + "r.bmp", securityTerraceR, securityTerracePal);
+    // _skyScreen->writeBMP(securityTerraceNum + "r.bmp", securityTerraceR, securityTerracePal);
 
-    uint16 transporterRoomNum = 112;
-    uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
-    uint8* transporterRoom = _skyDisk->loadFile(transporterRoomNum);
-    uint8* transporterPal = (uint8*)_skyCompact->fetchCpt(4318);
-    _skyScreen->writeBMP("112.bmp", transporterRoom, transporterPal);
-    _skyScreen->writeBMP("112r.bmp", transporterRoomR, transporterPal);
+    // uint16 transporterRoomNum = 112;
+    // uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
+    // uint8* transporterRoom = _skyDisk->loadFile(transporterRoomNum);
+    // uint8* transporterPal = (uint8*)_skyCompact->fetchCpt(4318);
+    // _skyScreen->writeBMP("112.bmp", transporterRoom, transporterPal);
+    // _skyScreen->writeBMP("112r.bmp", transporterRoomR, transporterPal);
 
 
     

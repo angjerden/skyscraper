@@ -13,7 +13,7 @@ int main(int argc, char **argv){
     std::cout << "C++ version: " << __cplusplus << std::endl;
 
     Scraper* scraper = new Scraper(skyPath);
-    scraper->scrapeAssetsHardcoded();
+    // scraper->scrapeAssetsHardcoded();
     // scraper->writeDinnerTableToFile();
     // scraper->writeCompactsToFile();
     // scraper->scrapeMIDI();

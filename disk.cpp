@@ -20,7 +20,7 @@ Disk::Disk(char* skyPath) {
     std::cout << "Found " << _dinnerTableEntries << " dinner table entries." << std::endl;
     
     // Read entries into dinnerTable
-    _dinnerTableArea = (uint8_t*)malloc(_dinnerTableEntries * 8);
+    _dinnerTableArea = (uint8*)malloc(_dinnerTableEntries * 8);
     std::fread(_dinnerTableArea, 1, 8 * _dinnerTableEntries, dnrFile);
 	
     memset(_buildList, 0, 60 * 2);

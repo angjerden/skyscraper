@@ -16,7 +16,7 @@ namespace Writer {
         // Create WAV header
         WavHeader header = {
         {'R', 'I', 'F', 'F'},
-        static_cast<uint32_t>(sizeof(WavHeader)) - 8 + audioSize,
+        static_cast<uint32>(sizeof(WavHeader)) - 8 + audioSize,
         {'W', 'A', 'V', 'E'},
         {'f', 'm', 't', ' '},
         16,
@@ -24,7 +24,7 @@ namespace Writer {
         num_channels,
         sample_rate,
         num_channels * sample_rate * bits_per_sample / 8,
-        static_cast<uint16_t>(num_channels * bits_per_sample / 8),
+        static_cast<uint16>(num_channels * bits_per_sample / 8),
         bits_per_sample,
         {'d', 'a', 't', 'a'},
         audioSize
