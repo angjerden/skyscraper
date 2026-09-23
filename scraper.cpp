@@ -1,6 +1,6 @@
 #include "scraper.h"
 #include "writer.h"
-
+#include <filesystem>
 Scraper::Scraper(char* skyPath) {
     _skyDisk = new Disk(skyPath);
     _skyCompact = new SkyCompact(skyPath);
@@ -44,25 +44,25 @@ void Scraper::scrapeAssetsHardcoded() {
     uint8* file49 = _skyDisk->loadFile(49);
     _skyScreen->writeBMP("49.bmp", file49, shamanPal);
 
-    uint16 startRoomNum = 64;
-    uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
-    uint8* startRoom = _skyDisk->loadFile(startRoomNum);
-    uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
-    _skyScreen->writeBMP("64r.bmp", startRoomR, startRoomPal);
+    // uint16 startRoomNum = 64;
+    // uint8* startRoomR = _skyScreen->recreateImage(startRoomNum);
+    // uint8* startRoom = _skyDisk->loadFile(startRoomNum);
+    // uint8* startRoomPal = (uint8*)_skyCompact->fetchCpt(4316);
+    // _skyScreen->writeBMP("64r.bmp", startRoomR, startRoomPal);
 
-    uint16 securityTerraceNum = 92;
-    uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
-    uint8* securityTerrace = _skyDisk->loadFile(securityTerraceNum);
-    uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
-    // _skyScreen->writeBMP("92r.bmp", securityTerraceR, securityTerracePal);
-    _skyScreen->writeBMP(securityTerraceNum + "r.bmp", securityTerraceR, securityTerracePal);
+    // uint16 securityTerraceNum = 92;
+    // uint8* securityTerraceR = _skyScreen->recreateImage(securityTerraceNum);
+    // uint8* securityTerrace = _skyDisk->loadFile(securityTerraceNum);
+    // uint8* securityTerracePal = (uint8*)_skyCompact->fetchCpt(4317);
+    // // _skyScreen->writeBMP("92r.bmp", securityTerraceR, securityTerracePal);
+    // _skyScreen->writeBMP(securityTerraceNum + "r.bmp", securityTerraceR, securityTerracePal);
 
-    uint16 transporterRoomNum = 112;
-    uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
-    uint8* transporterRoom = _skyDisk->loadFile(transporterRoomNum);
-    uint8* transporterPal = (uint8*)_skyCompact->fetchCpt(4318);
-    _skyScreen->writeBMP("112.bmp", transporterRoom, transporterPal);
-    _skyScreen->writeBMP("112r.bmp", transporterRoomR, transporterPal);
+    // uint16 transporterRoomNum = 112;
+    // uint8* transporterRoomR = _skyScreen->recreateImage(transporterRoomNum);
+    // uint8* transporterRoom = _skyDisk->loadFile(transporterRoomNum);
+    // uint8* transporterPal = (uint8*)_skyCompact->fetchCpt(4318);
+    // _skyScreen->writeBMP("112.bmp", transporterRoom, transporterPal);
+    // _skyScreen->writeBMP("112r.bmp", transporterRoomR, transporterPal);
 
 
     
@@ -76,8 +76,8 @@ void Scraper::scrapeAssetsHardcoded() {
     // uint8* sprite89 = _skyDisk->loadFile(89);
     // _skyScreen->writeBMP("sprite89.bmp", sprite89, shamanPal, 10, 58);
 
-    uint8* sprite91 = _skyDisk->loadFile(91);
-    _skyScreen->writeBMP("sprite91.bmp", sprite91, shamanPal);
+    // uint8* sprite91 = _skyDisk->loadFile(91);
+    // _skyScreen->writeBMP("sprite91.bmp", sprite91, shamanPal);
 }
 
 void Scraper::writeDinnerTableToFile() {
@@ -148,9 +148,12 @@ void Scraper::scrapeTextAndSpeech() {
         for (const auto& [textNr, text] : textMap) {
             outfile << textNr << " " << text << std::endl;
 
+            std::string speechFolder = "speech";
+            std::filesystem::create_directory(speechFolder);
+
             uint8* speechData = _skySound->getSpeech(textNr);
             if (speechData != NULL) {
-                Writer::writeWav("speech//" + std::to_string(textNr) + ".wav", speechData);
+                Writer::writeWav(speechFolder + "///" + std::to_string(textNr) + ".wav", speechData);
             }
         }
     }
