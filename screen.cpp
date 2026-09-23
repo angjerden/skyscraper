@@ -203,6 +203,7 @@ void Screen::writeBMP(const char* filename, uint8* image, uint8* palette, uint16
 
 	// prepend folder to filename
 	std::string imagePath = "img//";
+	std::filesystem::create_directory(imagePath);
 	std::string filenamePath = imagePath + filename;
 
 	std::ofstream file(filenamePath, std::ios::binary);

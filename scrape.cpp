@@ -17,7 +17,7 @@ int main(int argc, char **argv){
     // scraper->writeDinnerTableToFile();
     // scraper->writeCompactsToFile();
     // scraper->scrapeMIDI();
-    // scraper->scrapeTextAndSpeech();
+    scraper->scrapeTextAndSpeech();
 
     // Loop through each entry in sky.dsk
     // Store entry in some data structure

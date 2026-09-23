@@ -26,6 +26,7 @@
 // #include "common/scummsys.h"
 #include "skydefs.h"
 #include "types.h"
+#include <filesystem>
 
 class OSystem;
 
